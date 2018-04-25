@@ -1,9 +1,15 @@
 import * as babel from "babel-core";
 
 import * as types from "babel-types";
-import {callExpression, identifier, memberExpression, stringLiteral} from "babel-types";
+import {stringLiteral} from "babel-types";
 
 import * as util from "../util/jquery-heuristics";
+
+const template = require("@babel/template");
+
+const replaceAstTemplate = template.expression(`$(document.getElementById(IDENTIFIER))`,
+    {placeholderPattern: /^[_A-Z0-9]+$/},
+);
 
 export default () => ({
     visitor: {
@@ -24,12 +30,7 @@ export default () => ({
             console.log('Found replacement candidate $("' + unwrapped.value + '")');
 
             const id = stringLiteral(unwrapped.value.slice(1));
-            const getElementById = memberExpression(identifier("document"), identifier("getElementById"));
-            path.replaceWith(
-                callExpression(identifier("$"), [
-                    callExpression(getElementById, [id]),
-                ]),
-            );
+            path.replaceWith(replaceAstTemplate({IDENTIFIER: id}));
         },
     } as babel.Visitor<{}>,
 });

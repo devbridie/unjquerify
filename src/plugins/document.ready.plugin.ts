@@ -1,21 +1,19 @@
 import * as babel from "babel-core";
 
 import * as types from "babel-types";
-import {
-    binaryExpression,
-    CallExpression,
-    callExpression,
-    expressionStatement,
-    identifier,
-    Identifier,
-    ifStatement, memberExpression,
-    MemberExpression,
-    stringLiteral,
-    variableDeclaration,
-    variableDeclarator,
-} from "babel-types";
+import {CallExpression, Identifier, MemberExpression, Node} from "babel-types";
 
+const template = require("@babel/template");
 import * as util from "../util/jquery-heuristics";
+
+const replaceAstTemplate = template.statements(`
+    const LISTENER_ID = LISTENER_FUNCTION;
+    if (document.readyState !== 'loading') {
+        LISTENER_ID();
+    } else {
+        document.addEventListener('DOMContentLoaded', LISTENER_ID);
+    }
+`);
 
 export default () => ({
     visitor: {
@@ -49,25 +47,12 @@ export default () => ({
 
             // pull out ready argument
             const argument = ((path.node.expression as CallExpression).arguments[0]) as types.FunctionExpression;
-            const readyFunction = path.scope.generateUidIdentifier("onLoadListener");
-            path.insertBefore(
-                variableDeclaration("const", [variableDeclarator(readyFunction, argument)]),
-            );
+            const replacement = replaceAstTemplate({
+                LISTENER_FUNCTION: argument,
+                LISTENER_ID: path.scope.generateUidIdentifier("onLoadListener"),
+            }) as any as Node[];
 
-            const document = identifier("document");
-            const documentReadyState = memberExpression(document, identifier("readyState"));
-            const replacement = ifStatement(
-                binaryExpression("!==", documentReadyState, stringLiteral("loading")),
-                expressionStatement(callExpression(readyFunction, [])),
-                expressionStatement(callExpression(
-                    memberExpression(document, identifier("addEventListener")), [
-                        stringLiteral("DOMContentLoaded"),
-                        readyFunction,
-                    ]),
-                ),
-            );
-
-            path.replaceWith(replacement);
+            path.replaceWithMultiple(replacement);
         },
     } as babel.Visitor<{}>,
 });
