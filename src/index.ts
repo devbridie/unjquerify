@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import {promisify} from "util";
 import documentReadyPlugin from "./plugins/document.ready.plugin";
-import getElementByIdPlugin from "./plugins/selector.getElementById";
+import getElementByIdPlugin from "./plugins/selector.getElementById.plugin";
 
 const file = "../sample/simple.js";
 
