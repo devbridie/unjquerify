@@ -8,7 +8,8 @@
     "no-console": false,
     "no-var-requires": false,
     "arrow-parens": false,
-    "curly": false
+    "curly": false,
+    "interface-name": false
   },
   "rulesDirectory": []
 }

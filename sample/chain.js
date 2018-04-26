@@ -1,0 +1,1 @@
+$("a").fn1("test").fn2("test 2").fn3(function() { console.log("test"); });
