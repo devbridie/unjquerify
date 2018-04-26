@@ -3,18 +3,18 @@ import * as babel from "babel-core";
 import {isStringLiteral, stringLiteral} from "babel-types";
 
 import {some} from "fp-ts/lib/Option";
-import {isJQueryWrappedElement, unWrapjQueryElement} from "../util/jquery-heuristics";
+import {isJQueryWrappedElement, unWrapjQueryElement} from "../../util/jquery-heuristics";
 
 const template = require("@babel/template");
 
-const replaceAstTemplate = template.expression(`$(document.getElementById(IDENTIFIER))`,
+const replaceAstTemplate = template.expression(`$(document.querySelectorAll(SELECTOR))`,
     {placeholderPattern: /^[_A-Z0-9]+$/},
 );
 
-export default () => ({
+export const QuerySelectorAllPlugin = () => ({
     visitor: {
         /*
-            $("#...") => $(document.getElementById("..."))
+            $("<selector>") => $(document.querySelectorAll("<selector>"))
          */
         CallExpression: (path) => {
             some(path.node)
@@ -22,11 +22,10 @@ export default () => ({
                 .map(wrapped => unWrapjQueryElement(wrapped))
                 .mapNullable(unwrapped => isStringLiteral(unwrapped) ? unwrapped : null)
                 .map(literal => literal.value)
-                .filter(selector => /^#[a-zA-Z0-9]+$/.test(selector))
-                .map(cssId => cssId.slice(1))
+                .map(selector => selector.slice(1))
                 .map(id => stringLiteral(id))
                 .map(literal => {
-                    path.replaceWith(replaceAstTemplate({IDENTIFIER: literal}));
+                    path.replaceWith(replaceAstTemplate({SELECTOR: literal}));
                 });
         },
     } as babel.Visitor<{}>,

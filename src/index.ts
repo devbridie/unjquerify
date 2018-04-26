@@ -2,10 +2,10 @@ import * as babel from "babel-core";
 import * as fs from "fs";
 import * as path from "path";
 import {promisify} from "util";
-import documentReadyPlugin from "./plugins/document.ready.plugin";
-import getElementByIdPlugin from "./plugins/selector.getElementById.plugin";
-import getElementsByClassNamePlugin from "./plugins/selector.getElementsByClassName.plugin";
-import querySelectorAllPlugin from "./plugins/selector.querySelectorAll.plugin";
+import {DocumentReadyPlugin} from "./plugins/events/document-loading/document.ready.plugin";
+import {GetElementByIdPlugin} from "./plugins/selectors/getElementById.plugin";
+import {GetElementsByClassNamePlugin} from "./plugins/selectors/getElementsByClassName.plugin";
+import {QuerySelectorAllPlugin} from "./plugins/selectors/querySelectorAll.plugin";
 
 const file = "../sample/simple.js";
 
@@ -18,10 +18,10 @@ const file = "../sample/simple.js";
 
     const transformed = babel.transform(fileContents, {
         plugins: [
-            documentReadyPlugin,
-            getElementByIdPlugin,
-            getElementsByClassNamePlugin,
-            querySelectorAllPlugin,
+            DocumentReadyPlugin,
+            GetElementByIdPlugin,
+            GetElementsByClassNamePlugin,
+            QuerySelectorAllPlugin,
         ],
     });
 

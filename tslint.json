@@ -9,7 +9,9 @@
     "no-var-requires": false,
     "arrow-parens": false,
     "curly": false,
-    "interface-name": false
+    "interface-name": false,
+    "no-unused-variable": true,
+    "no-unused-expression": true
   },
   "rulesDirectory": []
 }

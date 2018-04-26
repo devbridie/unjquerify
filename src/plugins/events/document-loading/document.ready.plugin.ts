@@ -2,7 +2,7 @@ import * as babel from "babel-core";
 
 import {isCallExpression, isFunctionExpression, isIdentifier, isMemberExpression, Node} from "babel-types";
 import {some} from "fp-ts/lib/Option";
-import {isJQueryWrappedElement, unWrapjQueryElement} from "../util/jquery-heuristics";
+import {isJQueryWrappedElement, unWrapjQueryElement} from "../../../util/jquery-heuristics";
 
 const template = require("@babel/template");
 
@@ -15,7 +15,7 @@ const replaceAstTemplate = template.statements(`
     }
 `);
 
-export default () => ({
+export const DocumentReadyPlugin = () => ({
     visitor: {
         /**
          * Transforms <code>$(document).ready(e)</code> to

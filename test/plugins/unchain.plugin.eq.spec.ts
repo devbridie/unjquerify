@@ -1,11 +1,11 @@
 import {Page} from "puppeteer";
-import unchainPlugin from "../../src/plugins/unchain.plugin";
+import {UnchainPlugin} from "../../src/plugins/unchain.plugin";
 import {assertEqualResult, BrowserTest} from "../brower-test";
 
 const tests: BrowserTest[] = [
     {
         code: `$(document).text("test").addClass("hidden")`,
-        plugin: unchainPlugin,
+        plugin: UnchainPlugin,
         resultRequiresJquery: true,
         testFunction: async (before: Promise<Page>, after: Promise<Page>) => {
             it("should have executed the first statement", async () => {
@@ -19,7 +19,7 @@ const tests: BrowserTest[] = [
     },
     {
         code: `$(document).addClass("test3").addClass("hidden").addClass("test")`,
-        plugin: unchainPlugin,
+        plugin: UnchainPlugin,
         resultRequiresJquery: true,
         testFunction: async (before: Promise<Page>, after: Promise<Page>) => {
             it("should have executed the first statement", async () => {

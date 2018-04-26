@@ -14,16 +14,10 @@ import {
     MemberExpression,
     SpreadElement,
     variableDeclaration,
-    variableDeclarator
+    variableDeclarator,
 } from "babel-types";
 
 import {some} from "fp-ts/lib/Option";
-
-const template = require("@babel/template");
-
-const replaceAstTemplate = template.expression(`$(document.querySelectorAll(SELECTOR))`,
-    {placeholderPattern: /^[_A-Z0-9]+$/},
-);
 
 interface ChainedMemberExpression extends MemberExpression {
     object: CallExpression;
@@ -57,7 +51,7 @@ function buildChain(expr: CallExpression, acc: ChainedTuple[] = []): ChainedTupl
     }
 }
 
-export default () => ({
+export const UnchainPlugin = () => ({
     visitor: {
         /*
             $("...").a().b() -> let x = $("..."); x = x.a(); x = x.b();
