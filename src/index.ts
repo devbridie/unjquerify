@@ -4,6 +4,8 @@ import * as path from "path";
 import {promisify} from "util";
 import documentReadyPlugin from "./plugins/document.ready.plugin";
 import getElementByIdPlugin from "./plugins/selector.getElementById.plugin";
+import getElementsByClassNamePlugin from "./plugins/selector.getElementsByClassName.plugin";
+import querySelectorAllPlugin from "./plugins/selector.querySelectorAll.plugin";
 
 const file = "../sample/simple.js";
 
@@ -18,6 +20,8 @@ const file = "../sample/simple.js";
         plugins: [
             documentReadyPlugin,
             getElementByIdPlugin,
+            getElementsByClassNamePlugin,
+            querySelectorAllPlugin,
         ],
     });
 
