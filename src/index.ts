@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import {promisify} from "util";
 import {DocumentReadyPlugin} from "./plugins/events/document-loading/document.ready.plugin";
+import {CssGetPlugin} from "./plugins/manipulation/style-properties/css.get.plugin";
 import {GetElementByIdPlugin} from "./plugins/selectors/getElementById.plugin";
 import {GetElementsByClassNamePlugin} from "./plugins/selectors/getElementsByClassName.plugin";
 import {QuerySelectorAllPlugin} from "./plugins/selectors/querySelectorAll.plugin";
@@ -22,6 +23,7 @@ const file = "../sample/simple.js";
             GetElementByIdPlugin,
             GetElementsByClassNamePlugin,
             QuerySelectorAllPlugin,
+            CssGetPlugin,
         ],
     });
 
