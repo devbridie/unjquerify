@@ -1,7 +1,6 @@
 import * as babel from "babel-core";
 
 import {isCallExpression, isFunctionExpression, isIdentifier, isMemberExpression, Node} from "babel-types";
-import {some} from "fp-ts/lib/Option";
 import {isJQueryWrappedElement, unWrapjQueryElement} from "../../../util/jquery-heuristics";
 
 const template = require("@babel/template");
@@ -28,24 +27,24 @@ export const DocumentReadyPlugin = () => ({
          * </code></pre>
          */
         ExpressionStatement: path => {
-            some(path.node.expression)
-                .mapNullable(e => isCallExpression(e) ? e : null)
-                .filter(callExpression => some(callExpression)
-                    .mapNullable(e => isMemberExpression(e.callee) ? e.callee : null)
-                    .filter(member => isIdentifier(member.property) && member.property.name === "ready")
-                    .map(member => member.object)
-                    .mapNullable(object => isJQueryWrappedElement(object) ? unWrapjQueryElement(object) : null)
-                    .filter(unwrapped => isIdentifier(unwrapped) && unwrapped.name === "document")
-                    .isSome())
-                .map(callExpression => callExpression.arguments[0])
-                .mapNullable(argument => isFunctionExpression(argument) ? argument : null)
-                .mapNullable(argument => {
-                    console.log("Found replacement candidate $(document.ready)");
-                    path.replaceWithMultiple(replaceAstTemplate({
-                        LISTENER_FUNCTION: argument,
-                        LISTENER_ID: path.scope.generateUidIdentifier("onLoadListener"),
-                    }) as Node[]);
-                });
+            if (!isCallExpression(path.node.expression)) return;
+            const callExpression = path.node.expression;
+            if (!isMemberExpression(callExpression.callee)) return;
+            const member = callExpression.callee;
+            if (!(isIdentifier(member.property) && member.property.name === "ready")) return;
+            const object = callExpression.callee.object;
+            if (!isJQueryWrappedElement(object)) return;
+            const unwrapped = unWrapjQueryElement(object);
+            if (!(isIdentifier(unwrapped) && unwrapped.name !== "document")) return;
+
+            const argument = callExpression.arguments[0];
+            if (!isFunctionExpression(argument)) return;
+
+            console.log("Found replacement candidate $(document.ready)");
+            path.replaceWithMultiple(replaceAstTemplate({
+                LISTENER_FUNCTION: argument,
+                LISTENER_ID: path.scope.generateUidIdentifier("onLoadListener"),
+            }) as Node[]);
         },
     } as babel.Visitor<{}>,
 });

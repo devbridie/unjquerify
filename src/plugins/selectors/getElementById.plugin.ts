@@ -2,7 +2,6 @@ import * as babel from "babel-core";
 
 import {isStringLiteral, stringLiteral} from "babel-types";
 
-import {some} from "fp-ts/lib/Option";
 import {isJQueryWrappedElement, unWrapjQueryElement} from "../../util/jquery-heuristics";
 
 const template = require("@babel/template");
@@ -17,17 +16,14 @@ export const GetElementByIdPlugin = () => ({
             $("#...") => $(document.getElementById("..."))
          */
         CallExpression: (path) => {
-            some(path.node)
-                .filter(node => isJQueryWrappedElement(node))
-                .map(wrapped => unWrapjQueryElement(wrapped))
-                .mapNullable(unwrapped => isStringLiteral(unwrapped) ? unwrapped : null)
-                .map(literal => literal.value)
-                .filter(selector => /^#[a-zA-Z0-9]+$/.test(selector))
-                .map(cssId => cssId.slice(1))
-                .map(id => stringLiteral(id))
-                .map(literal => {
-                    path.replaceWith(replaceAstTemplate({IDENTIFIER: literal}));
-                });
+            if (!isJQueryWrappedElement(path.node)) return;
+            const unwrapped = unWrapjQueryElement(path.node);
+            if (!isStringLiteral(unwrapped)) return;
+            const literal = unwrapped.value;
+            if (!/^#[a-zA-Z0-9]+$/.test(literal)) return;
+            const id = literal.slice(1);
+            const newLiteral = stringLiteral(id);
+            path.replaceWith(replaceAstTemplate({IDENTIFIER: newLiteral}));
         },
     } as babel.Visitor<{}>,
 });

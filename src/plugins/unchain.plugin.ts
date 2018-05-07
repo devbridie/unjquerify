@@ -17,8 +17,6 @@ import {
     variableDeclarator,
 } from "babel-types";
 
-import {some} from "fp-ts/lib/Option";
-
 interface ChainedMemberExpression extends MemberExpression {
     object: CallExpression;
     property: Identifier;
@@ -57,27 +55,26 @@ export const UnchainPlugin = () => ({
             $("...").a().b() -> let x = $("..."); x = x.a(); x = x.b();
          */
         CallExpression: (path) => {
-            some(path.node).map(node => {
-                if (isChainedCall(node)) {
-                    const chain = buildChain(node);
-                    const chainVariable = path.scope.generateUidIdentifier("chain");
-                    const first = chain[0];
-                    const middle = chain.slice(1, chain.length - 1);
-                    const last = chain[chain.length - 1];
+            const node = path.node;
+            if (isChainedCall(node)) {
+                const chain = buildChain(node);
+                const chainVariable = path.scope.generateUidIdentifier("chain");
+                const first = chain[0];
+                const middle = chain.slice(1, chain.length - 1);
+                const last = chain[chain.length - 1];
 
-                    // TODO this only works for the example
-                    const firstExpression = callExpression(first[0], first[1]);
-                    const statements = [
-                        variableDeclaration("let", [variableDeclarator(chainVariable, firstExpression)]),
-                        ...middle.map(link => {
-                            const linkExpression = callExpression(memberExpression(chainVariable, link[0]), link[1]);
-                            return expressionStatement(assignmentExpression("=", chainVariable, linkExpression));
-                        }),
-                    ];
-                    path.getStatementParent().insertBefore(statements);
-                    path.replaceWith(callExpression(memberExpression(chainVariable, last[0]), last[1]));
-                }
-            });
+                // TODO this only works for the example
+                const firstExpression = callExpression(first[0], first[1]);
+                const statements = [
+                    variableDeclaration("let", [variableDeclarator(chainVariable, firstExpression)]),
+                    ...middle.map(link => {
+                        const linkExpression = callExpression(memberExpression(chainVariable, link[0]), link[1]);
+                        return expressionStatement(assignmentExpression("=", chainVariable, linkExpression));
+                    }),
+                ];
+                path.getStatementParent().insertBefore(statements);
+                path.replaceWith(callExpression(memberExpression(chainVariable, last[0]), last[1]));
+            }
         },
     } as babel.Visitor<{}>,
 });
