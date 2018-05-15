@@ -1,35 +1,39 @@
 import * as babel from "babel-core";
 import {
-    callExpression,
+    assignmentExpression,
+    expressionStatement,
     identifier,
     isIdentifier,
     isMemberExpression,
+    isSpreadElement,
     isStringLiteral,
     memberExpression,
-    nullLiteral,
-    stringLiteral,
 } from "babel-types";
+import camelcase from "camelcase";
 
 export const CssSetPlugin = () => ({
     visitor: {
         /*
-            $el.css("color") => el.style.color
+            $el.css("color", "red") => el.style.color = "red"
          */
         CallExpression: (path) => {
             const node = path.node;
             if (!isMemberExpression(node.callee)) return;
             if (!(isIdentifier(node.callee.property) && node.callee.property.name === "css")) return;
+            const [firstArg, secondArg, ...rest] = path.node.arguments;
+            if (!(isStringLiteral(firstArg) && secondArg)) return;
 
             const el = memberExpression(node.callee.object, identifier("0"), true); // pull out of jquery;
 
-            const getComputedStyle = identifier("getComputedStyle");
-            const computedStyle = callExpression(getComputedStyle, [el, nullLiteral()]);
-            const arg = node.arguments[0];
-            if (!isStringLiteral(arg)) return; // TODO fix for array type
-            const styleIdValue = arg.value;
-            const styleIdentifier = stringLiteral(styleIdValue);
-            const property = memberExpression(computedStyle, styleIdentifier, true);
-            path.replaceWith(property);
+            const style = memberExpression(el, identifier("style"));
+
+            if (isStringLiteral(firstArg) && !isSpreadElement(secondArg)) {
+                const propertyName = firstArg.value;
+                const property = memberExpression(style, identifier(camelcase(propertyName)));
+                const assignment = assignmentExpression("=", property, secondArg);
+                path.replaceExpressionWithStatements([expressionStatement(assignment)]);
+            }
+            // TODO other cases
         },
     } as babel.Visitor<{}>,
 });
