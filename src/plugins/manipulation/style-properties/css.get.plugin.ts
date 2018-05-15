@@ -4,30 +4,31 @@ import {
     identifier,
     isIdentifier,
     isMemberExpression,
+    isStringLiteral,
     memberExpression,
     nullLiteral,
-    StringLiteral,
+    stringLiteral,
 } from "babel-types";
 
-// TODO fix broken behavior on background-color
 export const CssGetPlugin = () => ({
     visitor: {
         /*
-            $el.css("color") => el.style.color
+            $el.css("color") => getComputedStyle(el, null)["color"]
          */
         CallExpression: (path) => {
             const node = path.node;
             if (!isMemberExpression(node.callee)) return;
-            if (isIdentifier(node.callee.property) && node.callee.property.name !== "css") return;
+            if (!(isIdentifier(node.callee.property) && node.callee.property.name === "css")) return;
+            if (node.arguments.length !== 1) return;
             const el = memberExpression(node.callee.object, identifier("0"), true); // pull out of jquery;
 
-            // construct el.ownerDocument.defaultView
-            const ownerDocument = memberExpression(el, identifier("ownerDocument"));
-            const defaultView = memberExpression(ownerDocument, identifier("defaultView"));
-            const getComputedStyle = memberExpression(defaultView, identifier("getComputedStyle"));
+            const getComputedStyle = identifier("getComputedStyle");
             const computedStyle = callExpression(getComputedStyle, [el, nullLiteral()]);
-            const styleIdentifier = identifier((node.arguments[0] as StringLiteral).value); // TODO fix bad cast
-            const property = memberExpression(computedStyle, styleIdentifier);
+            const arg = node.arguments[0];
+            if (!isStringLiteral(arg)) return; // TODO fix for array type
+            const styleIdValue = arg.value;
+            const styleIdentifier = stringLiteral(styleIdValue);
+            const property = memberExpression(computedStyle, styleIdentifier, true);
             path.replaceWith(property);
         },
     } as babel.Visitor<{}>,
