@@ -7,6 +7,8 @@ import {CssGetPlugin} from "./plugins/manipulation/style-properties/css.get.plug
 import {GetElementByIdPlugin} from "./plugins/selectors/getElementById.plugin";
 import {GetElementsByClassNamePlugin} from "./plugins/selectors/getElementsByClassName.plugin";
 import {QuerySelectorAllPlugin} from "./plugins/selectors/querySelectorAll.plugin";
+import {ClickHandlerPlugin} from "./plugins/events/mouse-events/click.handler.plugin";
+import {OnPlugin} from "./plugins/events/event-handler-attachment/on.plugin";
 
 const file = "../sample/simple.js";
 
@@ -24,6 +26,8 @@ const file = "../sample/simple.js";
             GetElementsByClassNamePlugin,
             QuerySelectorAllPlugin,
             CssGetPlugin,
+            OnPlugin(),
+            ClickHandlerPlugin,
         ],
     });
 
