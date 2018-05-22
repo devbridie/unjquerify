@@ -1,5 +1,5 @@
 import * as types from "babel-types";
-import {CallExpression, Node} from "babel-types";
+import {CallExpression, Expression, isIdentifier, Node} from "babel-types";
 
 const isjQueryIdentifier = (name: string) => {
     return name === "jQuery" || name === "$";
@@ -15,10 +15,7 @@ export function isJQueryWrappedElement(node: Node): boolean {
         return false;
     }
     const callee = (node as CallExpression).callee;
-    if (callee.type !== "Identifier" || !isjQueryIdentifier(callee.name)) {
-        return false;
-    }
-    return true;
+    return (isIdentifier(callee) && isjQueryIdentifier(callee.name));
 }
 
 /**
@@ -26,9 +23,9 @@ export function isJQueryWrappedElement(node: Node): boolean {
  * @param {Node} node
  * @returns {Node}
  */
-export function unWrapjQueryElement(node: Node): Node {
+export function unWrapjQueryElement(node: Node): Expression {
     if (!isJQueryWrappedElement(node)) {
         throw Error(`${node} is not a valid jQuery wrapped element.`);
     }
-    return (node as CallExpression).arguments[0];
+    return (node as CallExpression).arguments[0] as Expression;
 }
