@@ -35,7 +35,7 @@ export const DocumentReadyPlugin = () => ({
             const object = callExpression.callee.object;
             if (!isJQueryWrappedElement(object)) return;
             const unwrapped = unWrapjQueryElement(object);
-            if (!(isIdentifier(unwrapped) && unwrapped.name !== "document")) return;
+            if (!(isIdentifier(unwrapped) && unwrapped.name === "document")) return;
 
             const argument = callExpression.arguments[0];
             if (!isFunctionExpression(argument)) return;
