@@ -9,6 +9,10 @@ import {GetElementsByClassNamePlugin} from "./plugins/selectors/getElementsByCla
 import {QuerySelectorAllPlugin} from "./plugins/selectors/querySelectorAll.plugin";
 import {ClickHandlerPlugin} from "./plugins/events/mouse-events/click.handler.plugin";
 import {OnPlugin} from "./plugins/events/event-handler-attachment/on.plugin";
+import {AddClassPlugin} from "./plugins/attributes/addclass.plugin";
+import {TextSetPlugin} from "./plugins/manipulation/dom-insertion/text.set.plugin";
+import {TextGetPlugin} from "./plugins/manipulation/dom-insertion/text.get.plugin";
+import {HidePlugin} from "./plugins/effects/basics/hide.plugin";
 
 const file = "../sample/simple.js";
 
@@ -28,6 +32,10 @@ const file = "../sample/simple.js";
             CssGetPlugin,
             OnPlugin(),
             ClickHandlerPlugin,
+            AddClassPlugin,
+            TextSetPlugin,
+            TextGetPlugin,
+            HidePlugin,
         ],
     });
 
