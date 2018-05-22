@@ -13,6 +13,7 @@ import {AddClassPlugin} from "./plugins/attributes/addclass.plugin";
 import {TextSetPlugin} from "./plugins/manipulation/dom-insertion/text.set.plugin";
 import {TextGetPlugin} from "./plugins/manipulation/dom-insertion/text.get.plugin";
 import {HidePlugin} from "./plugins/effects/basics/hide.plugin";
+import {UnwrapPlugin} from "./plugins/unwrap.plugin";
 
 const file = "../sample/simple.js";
 
@@ -36,6 +37,7 @@ const file = "../sample/simple.js";
             TextSetPlugin,
             TextGetPlugin,
             HidePlugin,
+            UnwrapPlugin,
         ],
     });
 
