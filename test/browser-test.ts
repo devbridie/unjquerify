@@ -57,7 +57,10 @@ export async function executeCode(code: string, page1: Page, page2: Page) {
 /**
  * Helper function to check that the same code evaluates to the same result.
  */
-export async function assertEqualResult(page1: Page, page2: Page, code: string, description?: string) {
+export async function assertEqualResult(page1: Page,
+                                        page2: Page,
+                                        code: string,
+                                        description: string = `Should return an equivalent result for code ${code}`) {
     assert.deepStrictEqual(await page1.evaluate(code), await page2.evaluate(code), description);
 }
 
@@ -91,7 +94,9 @@ export function executeBrowserTestSuite(suite: BrowserTestSuite) {
                         await suite.before(preTransformPage, postTransformPage);
                     }
                     const transformed = babel.transform(suite.code, {plugins: suite.plugins}).code as string;
+                    console.log("preTransformPage", suite.code);
                     await preTransformPage.evaluate(suite.code);
+                    console.log("postTransformPage", transformed);
                     await postTransformPage.evaluate(transformed);
                 } else {
                     assert.fail("Browser not initialized.");

@@ -1,3 +1,4 @@
 import {OnPlugin} from "../event-handler-attachment/on.plugin";
+import {Visitor} from "babel-traverse";
 
-export const ClickHandlerPlugin = OnPlugin("click");
+export const ClickHandlerPlugin: () => { visitor: Visitor } = OnPlugin("click");

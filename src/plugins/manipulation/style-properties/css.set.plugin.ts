@@ -20,7 +20,7 @@ export const CssSetPlugin = () => ({
             const node = path.node;
             if (!isMemberExpression(node.callee)) return;
             if (!(isIdentifier(node.callee.property) && node.callee.property.name === "css")) return;
-            const [firstArg, secondArg, ...rest] = path.node.arguments;
+            const [firstArg, secondArg] = path.node.arguments;
             if (!(isStringLiteral(firstArg) && secondArg)) return;
 
             const el = memberExpression(node.callee.object, identifier("0"), true); // pull out of jquery;
