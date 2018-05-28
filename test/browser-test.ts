@@ -1,6 +1,7 @@
 import * as assert from "assert";
 import * as babel from "babel-core";
 import puppeteer, {Browser, Page} from "puppeteer";
+import {Plugin} from "../src/model/plugin";
 
 /**
  * Describes an equivalence browser test.
@@ -18,7 +19,7 @@ export interface BrowserTestSuite {
     /**
      * The plugins that will be used for code transformation.
      */
-    plugins: Array<() => any>;
+    plugins: Plugin[];
     /**
      * Describes if the second test page requires jQuery for verification. Useful for jQuery to jQuery transformations.
      */
@@ -93,7 +94,8 @@ export function executeBrowserTestSuite(suite: BrowserTestSuite) {
                     if (suite.before) {
                         await suite.before(preTransformPage, postTransformPage);
                     }
-                    const transformed = babel.transform(suite.code, {plugins: suite.plugins}).code as string;
+                    const babelPlugins = suite.plugins.map(p => p.babel);
+                    const transformed = babel.transform(suite.code, {plugins: babelPlugins}).code as string;
                     console.log("preTransformPage", suite.code);
                     await preTransformPage.evaluate(suite.code);
                     console.log("postTransformPage", transformed);

@@ -1,4 +1,3 @@
-import * as babel from "babel-core";
 import {
     callExpression,
     identifier,
@@ -41,6 +40,6 @@ export const CssGetPlugin: Plugin = {
                 const property = memberExpression(computedStyle, styleIdentifier, true);
                 path.replaceWith(property);
             },
-        } as babel.Visitor<{}>,
+        },
     }),
 };

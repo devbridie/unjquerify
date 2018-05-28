@@ -1,5 +1,3 @@
-import * as babel from "babel-core";
-
 import {
     assignmentExpression,
     callExpression,
@@ -16,6 +14,7 @@ import {
     variableDeclaration,
     variableDeclarator,
 } from "babel-types";
+import {Plugin} from "../model/plugin";
 
 interface ChainedMemberExpression extends MemberExpression {
     object: CallExpression;
@@ -49,32 +48,37 @@ function buildChain(expr: CallExpression, acc: ChainedTuple[] = []): ChainedTupl
     }
 }
 
-export const UnchainPlugin = () => ({
-    visitor: {
-        /*
-            $("...").a().b() -> let x = $("..."); x = x.a(); x = x.b();
-         */
-        CallExpression: (path) => {
-            const node = path.node;
-            if (isChainedCall(node)) {
-                const chain = buildChain(node);
-                const chainVariable = path.scope.generateUidIdentifier("chain");
-                const first = chain[0];
-                const middle = chain.slice(1, chain.length - 1);
-                const last = chain[chain.length - 1];
+export const UnchainPlugin: Plugin = {
+    name: "UnchainPlugin",
+    references: [],
+    fromExample: `$el.a().b()`,
+    toExample: `let x = el.a(); x = x.b()`,
+    description: `Converts chained calls.`,
 
-                // TODO this only works for the example
-                const firstExpression = callExpression(first[0], first[1]);
-                const statements = [
-                    variableDeclaration("let", [variableDeclarator(chainVariable, firstExpression)]),
-                    ...middle.map(link => {
-                        const linkExpression = callExpression(memberExpression(chainVariable, link[0]), link[1]);
-                        return expressionStatement(assignmentExpression("=", chainVariable, linkExpression));
-                    }),
-                ];
-                path.getStatementParent().insertBefore(statements);
-                path.replaceWith(callExpression(memberExpression(chainVariable, last[0]), last[1]));
-            }
+    babel: () => ({
+        visitor: {
+            CallExpression: (path) => {
+                const node = path.node;
+                if (isChainedCall(node)) {
+                    const chain = buildChain(node);
+                    const chainVariable = path.scope.generateUidIdentifier("chain");
+                    const first = chain[0];
+                    const middle = chain.slice(1, chain.length - 1);
+                    const last = chain[chain.length - 1];
+
+                    // TODO this only works for the example
+                    const firstExpression = callExpression(first[0], first[1]);
+                    const statements = [
+                        variableDeclaration("let", [variableDeclarator(chainVariable, firstExpression)]),
+                        ...middle.map(link => {
+                            const linkExpression = callExpression(memberExpression(chainVariable, link[0]), link[1]);
+                            return expressionStatement(assignmentExpression("=", chainVariable, linkExpression));
+                        }),
+                    ];
+                    path.getStatementParent().insertBefore(statements);
+                    path.replaceWith(callExpression(memberExpression(chainVariable, last[0]), last[1]));
+                }
+            },
         },
-    } as babel.Visitor<{}>,
-});
+    }),
+};

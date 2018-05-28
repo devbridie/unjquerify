@@ -1,4 +1,3 @@
-import * as babel from "babel-core";
 import {
     assignmentExpression,
     expressionStatement,
@@ -11,30 +10,41 @@ import {
 } from "babel-types";
 import camelcase from "camelcase";
 import {pullOutNativeElement} from "../../../util/jquery-heuristics";
+import {Plugin} from "../../../model/plugin";
+import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 
-export const CssSetPlugin = () => ({
-    visitor: {
-        /*
-            $el.css("color", "red") => el.style.color = "red"
-         */
-        CallExpression: (path) => {
-            const node = path.node;
-            if (!isMemberExpression(node.callee)) return;
-            if (!(isIdentifier(node.callee.property) && node.callee.property.name === "css")) return;
-            const [firstArg, secondArg] = path.node.arguments;
-            if (!(isStringLiteral(firstArg) && secondArg)) return;
+export const CssSetPlugin: Plugin = {
+    name: "CssSetPlugin",
+    references: [
+        jqueryApiReference("css"),
+        mdnReference("HTMLElement/style"),
+        youDontNeedJquery("2.1"),
+    ],
+    fromExample: `$el.css("color", "red")`,
+    toExample: `el.style.color = "red"`,
+    description: `Converts css set calls.`,
 
-            const el = pullOutNativeElement(node.callee.object);
+    babel: () => ({
+        visitor: {
+            CallExpression: (path) => {
+                const node = path.node;
+                if (!isMemberExpression(node.callee)) return;
+                if (!(isIdentifier(node.callee.property) && node.callee.property.name === "css")) return;
+                const [firstArg, secondArg] = path.node.arguments;
+                if (!(isStringLiteral(firstArg) && secondArg)) return;
 
-            const style = memberExpression(el, identifier("style"));
+                const el = pullOutNativeElement(node.callee.object);
 
-            if (isStringLiteral(firstArg) && !isSpreadElement(secondArg)) {
-                const propertyName = firstArg.value;
-                const property = memberExpression(style, identifier(camelcase(propertyName)));
-                const assignment = assignmentExpression("=", property, secondArg);
-                path.replaceExpressionWithStatements([expressionStatement(assignment)]);
-            }
-            // TODO other cases
+                const style = memberExpression(el, identifier("style"));
+
+                if (isStringLiteral(firstArg) && !isSpreadElement(secondArg)) {
+                    const propertyName = firstArg.value;
+                    const property = memberExpression(style, identifier(camelcase(propertyName)));
+                    const assignment = assignmentExpression("=", property, secondArg);
+                    path.replaceExpressionWithStatements([expressionStatement(assignment)]);
+                }
+                // TODO other cases
+            },
         },
-    } as babel.Visitor<{}>,
-});
+    }),
+};
