@@ -8,6 +8,7 @@ import {
 } from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
+import {pullOutNativeElement} from "../../../util/jquery-heuristics";
 
 export const TextSetPlugin: Plugin = {
     name: "TextSetPlugin",
@@ -29,7 +30,7 @@ export const TextSetPlugin: Plugin = {
                 if (node.arguments.length !== 1) return;
                 const firstArg = node.arguments[0] as Expression;
 
-                const el = memberExpression(node.callee.object, identifier("0"), true); // pull out of jquery;
+                const el = pullOutNativeElement(node.callee.object);
                 const textContent = memberExpression(el, identifier("textContent"));
                 const assignment = assignmentExpression("=", textContent, firstArg);
                 path.replaceWith(assignment);

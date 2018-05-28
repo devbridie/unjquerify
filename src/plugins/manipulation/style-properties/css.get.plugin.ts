@@ -11,6 +11,7 @@ import {
 } from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
+import {pullOutNativeElement} from "../../../util/jquery-heuristics";
 
 export const CssGetPlugin: Plugin = {
     name: "CssGetPlugin",
@@ -29,7 +30,7 @@ export const CssGetPlugin: Plugin = {
                 if (!isMemberExpression(node.callee)) return;
                 if (!(isIdentifier(node.callee.property) && node.callee.property.name === "css")) return;
                 if (node.arguments.length !== 1) return;
-                const el = memberExpression(node.callee.object, identifier("0"), true); // pull out of jquery;
+                const el = pullOutNativeElement(node.callee.object);
 
                 const getComputedStyle = identifier("getComputedStyle");
                 const computedStyle = callExpression(getComputedStyle, [el, nullLiteral()]);

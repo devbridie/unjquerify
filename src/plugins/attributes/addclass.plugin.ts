@@ -9,6 +9,7 @@ import {
 } from "babel-types";
 import {Plugin} from "../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../util/references";
+import {pullOutNativeElement} from "../../util/jquery-heuristics";
 
 export const AddClassPlugin: Plugin = {
     name: "AddClassPlugin",
@@ -30,7 +31,7 @@ export const AddClassPlugin: Plugin = {
                 if (node.arguments.length !== 1) return;
                 const firstArg = node.arguments[0];
                 if (!isStringLiteral(firstArg)) return;
-                const el = memberExpression(node.callee.object, identifier("0"), true); // pull out of jquery;
+                const el = pullOutNativeElement(node.callee.object);
 
                 const classList = memberExpression(el, identifier("classList"));
                 const add = memberExpression(classList, identifier("add"));

@@ -1,5 +1,5 @@
 import * as types from "babel-types";
-import {CallExpression, Expression, isIdentifier, Node} from "babel-types";
+import {CallExpression, Expression, identifier, isIdentifier, memberExpression, Node} from "babel-types";
 
 const isjQueryIdentifier = (name: string) => {
     return name === "jQuery" || name === "$";
@@ -28,4 +28,12 @@ export function unWrapjQueryElement(node: Node): Expression {
         throw Error(`${node} is not a valid jQuery wrapped element.`);
     }
     return (node as CallExpression).arguments[0] as Expression;
+}
+
+/**
+ * Pulls out the first element in a jQuery-wrapped DOM collection.
+ * Effectively $el => $el[0].
+ */
+export function pullOutNativeElement(node: Expression): Expression {
+    return memberExpression(node, identifier("0"), true);
 }

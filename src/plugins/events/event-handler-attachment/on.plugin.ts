@@ -11,12 +11,13 @@ import {
 import {NodePath} from "babel-traverse";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
+import {pullOutNativeElement} from "../../../util/jquery-heuristics";
 
 function replaceWithAddEventListener(path: NodePath<CallExpression>, eventName: Expression, rest: Expression[]) {
     const node = path.node;
     if (!isMemberExpression(node.callee)) return;
 
-    const el = memberExpression(node.callee.object, identifier("0"), true); // pull out of jquery;
+    const el = pullOutNativeElement(node.callee.object);
     const addEventListener = memberExpression(el, identifier("addEventListener"));
     const call = callExpression(addEventListener, [eventName, ...rest]);
     path.replaceWith(call);
@@ -57,7 +58,7 @@ export const OnPlugin: (eventName?: string) => Plugin = (eventName?: string) => 
                     if (!(isIdentifier(node.callee.property) && node.callee.property.name === eventName)) return;
 
                     if (node.arguments.length === 0) {
-                        const el = memberExpression(node.callee.object, identifier("0"), true); // pull out of jquery;
+                        const el = pullOutNativeElement(node.callee.object);
                         const eventIdentifier = path.scope.generateUidIdentifier(eventName);
                         const replacement = triggerTemplate({
                             EVENTVARIABLENAME: eventIdentifier,

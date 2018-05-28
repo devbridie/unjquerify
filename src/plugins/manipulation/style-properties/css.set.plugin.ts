@@ -10,6 +10,7 @@ import {
     memberExpression,
 } from "babel-types";
 import camelcase from "camelcase";
+import {pullOutNativeElement} from "../../../util/jquery-heuristics";
 
 export const CssSetPlugin = () => ({
     visitor: {
@@ -23,7 +24,7 @@ export const CssSetPlugin = () => ({
             const [firstArg, secondArg] = path.node.arguments;
             if (!(isStringLiteral(firstArg) && secondArg)) return;
 
-            const el = memberExpression(node.callee.object, identifier("0"), true); // pull out of jquery;
+            const el = pullOutNativeElement(node.callee.object);
 
             const style = memberExpression(el, identifier("style"));
 
