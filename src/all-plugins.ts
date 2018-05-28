@@ -10,9 +10,9 @@ import {HidePlugin} from "./plugins/effects/basics/hide.plugin";
 import {QuerySelectorAllPlugin} from "./plugins/selectors/querySelectorAll.plugin";
 import {TextGetPlugin} from "./plugins/manipulation/dom-insertion/text.get.plugin";
 import {DocumentReadyPlugin} from "./plugins/events/document-loading/document.ready.plugin";
-import {Visitor} from "babel-traverse";
+import {Plugin} from "./model/plugin";
 
-export const plugins: Array<() => { visitor: Visitor }> = [
+export const plugins: Plugin[] = [
     DocumentReadyPlugin,
     GetElementByIdPlugin,
     GetElementsByClassNamePlugin,

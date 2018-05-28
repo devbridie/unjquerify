@@ -1,4 +1,3 @@
-import * as babel from "babel-core";
 import {
     assignmentExpression,
     identifier,
@@ -7,23 +6,34 @@ import {
     memberExpression,
     stringLiteral,
 } from "babel-types";
+import {Plugin} from "../../../model/plugin";
+import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 
-export const HidePlugin = () => ({
-    visitor: {
-        /*
-            $el.hide() => el.style.display = "none";
-         */
-        CallExpression: (path) => {
-            const node = path.node;
-            if (!isMemberExpression(node.callee)) return;
-            if (!(isIdentifier(node.callee.property) && node.callee.property.name === "hide")) return;
-            if (node.arguments.length !== 0) return;
+export const HidePlugin: Plugin = {
+    name: "HidePlugin",
+    references: [
+        jqueryApiReference("hide"),
+        mdnReference("Element/classList"),
+        mdnReference("HTMLElement/style"),
+        youDontNeedJquery("8.1"),
+    ],
+    fromExample: `$el.hide()`,
+    toExample: `el.style.display = "none"`,
+    description: `Converts $el.hide() calls.`,
+    babel: () => ({
+        visitor: {
+            CallExpression: (path) => {
+                const node = path.node;
+                if (!isMemberExpression(node.callee)) return;
+                if (!(isIdentifier(node.callee.property) && node.callee.property.name === "hide")) return;
+                if (node.arguments.length !== 0) return;
 
-            const el = memberExpression(node.callee.object, identifier("0"), true); // pull out of jquery;
-            const style = memberExpression(el, identifier("style"));
-            const display = memberExpression(style, identifier("display"));
-            const assignment = assignmentExpression("=", display, stringLiteral("none"));
-            path.replaceWith(assignment);
+                const el = memberExpression(node.callee.object, identifier("0"), true); // pull out of jquery;
+                const style = memberExpression(el, identifier("style"));
+                const display = memberExpression(style, identifier("display"));
+                const assignment = assignmentExpression("=", display, stringLiteral("none"));
+                path.replaceWith(assignment);
+            },
         },
-    } as babel.Visitor<{}>,
-});
+    }),
+};

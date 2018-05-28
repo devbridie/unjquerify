@@ -1,7 +1,7 @@
-import * as babel from "babel-core";
-
 import {isCallExpression, isFunctionExpression, isIdentifier, isMemberExpression, Node} from "babel-types";
 import {isJQueryWrappedElement, unWrapjQueryElement} from "../../../util/jquery-heuristics";
+import {Plugin} from "../../../model/plugin";
+import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 
 const template = require("@babel/template");
 
@@ -14,37 +14,42 @@ const replaceAstTemplate = template.statements(`
     }
 `);
 
-export const DocumentReadyPlugin = () => ({
-    visitor: {
-        /**
-         * Transforms <code>$(document).ready(e)</code> to
-         * <code><pre>
-         * if (document.readyState !== 'loading') {
-         *   e();
-         * } else {
-         *   document.addEventListener('DOMContentLoaded', e);
-         * }
-         * </code></pre>
-         */
-        ExpressionStatement: path => {
-            if (!isCallExpression(path.node.expression)) return;
-            const callExpression = path.node.expression;
-            if (!isMemberExpression(callExpression.callee)) return;
-            const member = callExpression.callee;
-            if (!(isIdentifier(member.property) && member.property.name === "ready")) return;
-            const object = callExpression.callee.object;
-            if (!isJQueryWrappedElement(object)) return;
-            const unwrapped = unWrapjQueryElement(object);
-            if (!(isIdentifier(unwrapped) && unwrapped.name === "document")) return;
+export const DocumentReadyPlugin: Plugin = {
+    name: "DocumentReadyPlugin",
+    references: [
+        jqueryApiReference("ready"),
+        mdnReference("Events/DOMContentLoaded"),
+        youDontNeedJquery("5.0"),
+    ],
+    fromExample: `$(document).ready(e)`,
+    toExample: `if (document.readyState !== 'loading') {
+    e();
+} else {
+    document.addEventListener('DOMContentLoaded', e);
+}`,
+    description: "Converts $(document).ready calls.",
 
-            const argument = callExpression.arguments[0];
-            if (!isFunctionExpression(argument)) return;
+    babel: () => ({
+        visitor: {
+            ExpressionStatement: path => {
+                if (!isCallExpression(path.node.expression)) return;
+                const callExpression = path.node.expression;
+                if (!isMemberExpression(callExpression.callee)) return;
+                const member = callExpression.callee;
+                if (!(isIdentifier(member.property) && member.property.name === "ready")) return;
+                const object = callExpression.callee.object;
+                if (!isJQueryWrappedElement(object)) return;
+                const unwrapped = unWrapjQueryElement(object);
+                if (!(isIdentifier(unwrapped) && unwrapped.name === "document")) return;
 
-            console.log("Found replacement candidate $(document.ready)");
-            path.replaceWithMultiple(replaceAstTemplate({
-                LISTENER_FUNCTION: argument,
-                LISTENER_ID: path.scope.generateUidIdentifier("onLoadListener"),
-            }) as Node[]);
+                const argument = callExpression.arguments[0];
+                if (!isFunctionExpression(argument)) return;
+
+                path.replaceWithMultiple(replaceAstTemplate({
+                    LISTENER_FUNCTION: argument,
+                    LISTENER_ID: path.scope.generateUidIdentifier("onLoadListener"),
+                }) as Node[]);
+            },
         },
-    } as babel.Visitor<{}>,
-});
+    }),
+};
