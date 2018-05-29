@@ -16,7 +16,7 @@ const file = "../sample/simple.js";
     console.log("----");
 
     const transformed = babel.transform(fileContents, {
-        plugins,
+        plugins: plugins.map(p => p.babel),
         sourceMaps: true,
         sourceFileName: fileName,
         ast: false,
