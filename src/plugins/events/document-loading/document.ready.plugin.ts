@@ -16,6 +16,7 @@ const replaceAstTemplate = template.statements(`
 
 export const DocumentReadyPlugin: Plugin = {
     name: "DocumentReadyPlugin",
+    path: ["events", "document-loading", "document.ready"],
     references: [
         jqueryApiReference("ready"),
         mdnReference("Events/DOMContentLoaded"),

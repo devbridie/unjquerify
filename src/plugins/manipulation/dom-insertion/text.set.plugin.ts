@@ -12,6 +12,7 @@ import {pullOutNativeElement} from "../../../util/jquery-heuristics";
 
 export const TextSetPlugin: Plugin = {
     name: "TextSetPlugin",
+    path: ["manipulation", "dom-insertion", "text.set"],
     references: [
         jqueryApiReference("text"),
         mdnReference("Node/textContent"),

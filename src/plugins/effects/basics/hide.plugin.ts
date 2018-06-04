@@ -12,6 +12,7 @@ import {pullOutNativeElement} from "../../../util/jquery-heuristics";
 
 export const HidePlugin: Plugin = {
     name: "HidePlugin",
+    path: ["effects", "basics", "hide"],
     references: [
         jqueryApiReference("hide"),
         mdnReference("Element/classList"),

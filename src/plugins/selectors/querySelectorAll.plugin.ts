@@ -12,6 +12,7 @@ const replaceAstTemplate = template.expression(`$(document.querySelectorAll(SELE
 
 export const QuerySelectorAllPlugin: Plugin = {
     name: "QuerySelectorAllPlugin",
+    path: ["selectors", "querySelectorAll"],
     references: [
         jqueryApiReference("jQuery"),
         mdnReference("Document/querySelectorAll"),

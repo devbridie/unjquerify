@@ -6,6 +6,7 @@ import {pullOutNativeElement} from "../../../util/jquery-heuristics";
 
 export const TextGetPlugin: Plugin = {
     name: "TextGetPlugin",
+    path: ["manipulation", "dom-insertion", "text.get"],
     references: [
         jqueryApiReference("text"),
         mdnReference("Node/textContent"),

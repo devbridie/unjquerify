@@ -30,6 +30,7 @@ function innerIsArray(node: Node) {
 
 export const UnwrapPlugin: Plugin = {
     name: "UnwrapPlugin",
+    path: ["unwrap"],
     references: [
         jqueryApiReference("get"),
     ],

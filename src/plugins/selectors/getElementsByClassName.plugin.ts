@@ -12,6 +12,7 @@ const replaceAstTemplate = template.expression(`$(document.getElementsByClassNam
 
 export const GetElementsByClassNamePlugin: Plugin = {
     name: "GetElementsByClassNamePlugin",
+    path: ["selectors", "getElementsByClassName"],
     references: [
         jqueryApiReference("jQuery"),
         mdnReference("Document/getElementsByClassName"),

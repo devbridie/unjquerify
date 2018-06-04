@@ -14,6 +14,7 @@ import {pullOutNativeElement} from "../../../util/jquery-heuristics";
 
 export const CssGetPlugin: Plugin = {
     name: "CssGetPlugin",
+    path: ["manipulation", "style-properties", "css.get"],
     references: [
         jqueryApiReference("css"),
         mdnReference("Window/getComputedStyle"),

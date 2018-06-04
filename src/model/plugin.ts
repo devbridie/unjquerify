@@ -3,6 +3,7 @@ import {Reference} from "./reference";
 
 export interface Plugin {
     name: string;
+    path: string[];
     babel: () => PluginObj<Node>;
     references: Reference[];
     fromExample: string;

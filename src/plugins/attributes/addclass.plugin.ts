@@ -13,6 +13,7 @@ import {pullOutNativeElement} from "../../util/jquery-heuristics";
 
 export const AddClassPlugin: Plugin = {
     name: "AddClassPlugin",
+    path: ["attributes", "addclass"],
     references: [
         jqueryApiReference("addClass"),
         mdnReference("Element/classList"),

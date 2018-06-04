@@ -4,6 +4,7 @@ import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util
 
 export const ClickHandlerPlugin: Plugin = {
     name: "ClickHandlerPlugin",
+    path: ["events", "mouse-events", "click.handler"],
     references: [
         jqueryApiReference("click"),
         mdnReference("EventTarget/addEventListener"),

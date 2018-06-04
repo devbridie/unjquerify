@@ -35,6 +35,7 @@ ELEMENTREFERENCE.dispatchEvent(EVENTVARIABLENAME);
 
 export const OnPlugin: (eventName?: string) => Plugin = (eventName?: string) => ({
     name: "OnPlugin",
+    path: ["events", "event-handler-attachment", "on"],
     references: [
         jqueryApiReference("on"),
         mdnReference("EventTarget/addEventListener"),

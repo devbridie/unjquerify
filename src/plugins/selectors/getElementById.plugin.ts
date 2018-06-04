@@ -12,6 +12,7 @@ const replaceAstTemplate = template.expression(`$(document.getElementById(IDENTI
 
 export const GetElementByIdPlugin: Plugin = {
     name: "GetElementByIdPlugin",
+    path: ["selectors", "getElementById"],
     references: [
         jqueryApiReference("jQuery"),
         mdnReference("Document/getElementById"),

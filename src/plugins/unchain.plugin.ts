@@ -50,6 +50,7 @@ function buildChain(expr: CallExpression, acc: ChainedTuple[] = []): ChainedTupl
 
 export const UnchainPlugin: Plugin = {
     name: "UnchainPlugin",
+    path: ["unchain"],
     references: [],
     fromExample: `$el.a().b()`,
     toExample: `let x = el.a(); x = x.b()`,

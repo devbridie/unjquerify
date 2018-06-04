@@ -15,6 +15,7 @@ import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util
 
 export const CssSetPlugin: Plugin = {
     name: "CssSetPlugin",
+    path: ["manipulation", "style-properties", "css.set"],
     references: [
         jqueryApiReference("css"),
         mdnReference("HTMLElement/style"),
