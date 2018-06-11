@@ -10,6 +10,7 @@ import {setTestFilesPlugin} from "./set-test-files-plugin";
 import {IsPlugin} from "../../src/plugins/traversing/filtering/is.plugin";
 import {removeAssertPlugin} from "./remove-assert-plugin";
 import {removeExpectTotalPlugin} from "./remove-expect-total-plugin";
+import {CssSetPlugin} from "../../src/plugins/manipulation/style-properties/css.set.plugin";
 
 interface TestConversion {
     fromFile: string;
@@ -21,11 +22,20 @@ const testConversions: TestConversion[] = [
     {
         fromFile: "css.js",
         plugins: [
-            renameQunitModulePlugin("CssGetPlugin"),
+            renameQunitModulePlugin(CssGetPlugin.name),
             filterTestsPlugin(["css(String|Hash)", "show/hide detached nodes"]),
             CssGetPlugin.babel,
         ],
         toFile: "css.get.plugin.transform.js",
+    },
+    {
+        fromFile: "css.js",
+        plugins: [
+            renameQunitModulePlugin(CssSetPlugin.name),
+            filterTestsPlugin(["css(String|Hash)", "show/hide detached nodes"]),
+            CssSetPlugin.babel,
+        ],
+        toFile: "css.set.plugin.transform.js",
     },
     {
         fromFile: "traversing.js",
