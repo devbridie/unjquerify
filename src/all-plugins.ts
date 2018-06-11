@@ -11,6 +11,7 @@ import {QuerySelectorAllPlugin} from "./plugins/selectors/querySelectorAll.plugi
 import {TextGetPlugin} from "./plugins/manipulation/dom-insertion/text.get.plugin";
 import {DocumentReadyPlugin} from "./plugins/events/document-loading/document.ready.plugin";
 import {Plugin} from "./model/plugin";
+import {IsPlugin} from "./plugins/traversing/filtering/is.plugin";
 
 export const plugins: Plugin[] = [
     DocumentReadyPlugin,
@@ -25,4 +26,5 @@ export const plugins: Plugin[] = [
     TextGetPlugin,
     HidePlugin,
     UnwrapPlugin,
+    IsPlugin,
 ];
