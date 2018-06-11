@@ -7,6 +7,9 @@ import {CssGetPlugin} from "../../src/plugins/manipulation/style-properties/css.
 import {renameQunitModulePlugin} from "./rename-qunit-module-plugin";
 import {filterTestsPlugin} from "./filter-tests-plugin";
 import {setTestFilesPlugin} from "./set-test-files-plugin";
+import {IsPlugin} from "../../src/plugins/traversing/filtering/is.plugin";
+import {removeAssertPlugin} from "./remove-assert-plugin";
+import {removeExpectTotalPlugin} from "./remove-expect-total-plugin";
 
 interface TestConversion {
     fromFile: string;
@@ -23,6 +26,17 @@ const testConversions: TestConversion[] = [
             CssGetPlugin.babel,
         ],
         toFile: "css.get.plugin.transform.js",
+    },
+    {
+        fromFile: "traversing.js",
+        plugins: [
+            renameQunitModulePlugin(IsPlugin.name),
+            filterTestsPlugin(["is(String|undefined)"], true),
+            removeAssertPlugin([/.*invalid (expression|object).*/]),
+            removeExpectTotalPlugin("is(String|undefined)", 23 - 5),
+            IsPlugin.babel,
+        ],
+        toFile: "traversing.transform.js",
     },
 ];
 

@@ -3,14 +3,14 @@ import {Visitor} from "babel-traverse";
 
 const escapeStringRegexp = require("escape-string-regexp");
 
-export function filterTestsPlugin(testNames: string[]) {
+export function filterTestsPlugin(testNames: string[], onlyThese: boolean = false) {
     return ({
         visitor: {
             Program: (nodePath) => {
                 const config = memberExpression(identifier("QUnit"), identifier("config"));
                 const filter = memberExpression(config, identifier("filter"));
                 const regexString = testNames.map((name) => escapeStringRegexp(name)).join("|");
-                const regexLit = stringLiteral(`!/${regexString}/`);
+                const regexLit = stringLiteral((onlyThese ? "" : "!") + `/${regexString}/`);
                 const assignment = assignmentExpression("=", filter, regexLit);
                 (nodePath as any).unshiftContainer("body", expressionStatement(assignment));
             },
