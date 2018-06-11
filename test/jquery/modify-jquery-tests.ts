@@ -20,7 +20,7 @@ const testConversions: TestConversion[] = [
         plugins: [
             renameQunitModulePlugin("CssGetPlugin"),
             filterTestsPlugin(["css(String|Hash)", "show/hide detached nodes"]),
-            CssGetPlugin,
+            CssGetPlugin.babel,
         ],
         toFile: "css.get.plugin.transform.js",
     },
