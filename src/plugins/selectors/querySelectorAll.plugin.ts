@@ -1,6 +1,6 @@
 import {isStringLiteral} from "babel-types";
 
-import {isJQueryWrappedElement, unWrapjQueryElement} from "../../util/jquery-heuristics";
+import {unWrapjQueryElement} from "../../util/jquery-heuristics";
 import {Plugin} from "../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../util/references";
 
@@ -25,8 +25,8 @@ export const QuerySelectorAllPlugin: Plugin = {
     babel: () => ({
         visitor: {
             CallExpression: (path) => {
-                if (!isJQueryWrappedElement(path.node)) return;
                 const unwrapped = unWrapjQueryElement(path.node);
+                if (!unwrapped) return;
                 if (!isStringLiteral(unwrapped)) return;
                 path.replaceWith(replaceAstTemplate({SELECTOR: unwrapped}));
             },

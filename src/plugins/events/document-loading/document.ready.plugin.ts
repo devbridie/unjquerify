@@ -1,5 +1,5 @@
-import {isCallExpression, isFunctionExpression, isIdentifier, isMemberExpression, Node} from "babel-types";
-import {isJQueryWrappedElement, unWrapjQueryElement} from "../../../util/jquery-heuristics";
+import {isFunctionExpression, isIdentifier, Node} from "babel-types";
+import {isCallOnjQuery, unWrapjQueryElement} from "../../../util/jquery-heuristics";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 
@@ -33,17 +33,14 @@ export const DocumentReadyPlugin: Plugin = {
     babel: () => ({
         visitor: {
             ExpressionStatement: path => {
-                if (!isCallExpression(path.node.expression)) return;
-                const callExpression = path.node.expression;
-                if (!isMemberExpression(callExpression.callee)) return;
-                const member = callExpression.callee;
-                if (!(isIdentifier(member.property) && member.property.name === "ready")) return;
-                const object = callExpression.callee.object;
-                if (!isJQueryWrappedElement(object)) return;
-                const unwrapped = unWrapjQueryElement(object);
+                const node = path.node.expression;
+                if (!isCallOnjQuery(node, "ready")) return;
+
+                const unwrapped = unWrapjQueryElement(node.callee.object);
+                if (!unwrapped) return;
                 if (!(isIdentifier(unwrapped) && unwrapped.name === "document")) return;
 
-                const argument = callExpression.arguments[0];
+                const argument = node.arguments[0];
                 if (!isFunctionExpression(argument)) return;
 
                 path.replaceWithMultiple(replaceAstTemplate({

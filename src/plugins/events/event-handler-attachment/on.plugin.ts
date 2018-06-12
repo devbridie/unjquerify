@@ -3,7 +3,6 @@ import {
     callExpression,
     Expression,
     identifier,
-    isIdentifier,
     isMemberExpression,
     memberExpression,
     stringLiteral,
@@ -11,7 +10,7 @@ import {
 import {NodePath} from "babel-traverse";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
-import {pullOutNativeElement} from "../../../util/jquery-heuristics";
+import {isCallOnjQuery, pullOutNativeElement} from "../../../util/jquery-heuristics";
 
 function replaceWithAddEventListener(path: NodePath<CallExpression>, eventName: Expression, rest: Expression[]) {
     const node = path.node;
@@ -51,14 +50,13 @@ export const OnPlugin: (eventName?: string) => Plugin = (eventName?: string) => 
                 if (!isMemberExpression(node.callee)) return;
                 if (eventName === undefined) {
                     const firstArg = path.node.arguments[0] as Expression;
-
-                    if (!(isIdentifier(node.callee.property) && node.callee.property.name === "on")) return;
+                    if (!isCallOnjQuery(node, "on")) return;
                     if (node.arguments.length !== 2) return;
                     replaceWithAddEventListener(path, firstArg, path.node.arguments.slice(1) as Expression[]);
                 } else {
-                    if (!(isIdentifier(node.callee.property) && node.callee.property.name === eventName)) return;
+                    if (!isCallOnjQuery(node, eventName)) return;
 
-                    if (node.arguments.length === 0) {
+                    if (node.arguments.length === 0) { // .click()
                         const el = pullOutNativeElement(node.callee.object);
                         const eventIdentifier = path.scope.generateUidIdentifier(eventName);
                         const replacement = triggerTemplate({
@@ -66,7 +64,7 @@ export const OnPlugin: (eventName?: string) => Plugin = (eventName?: string) => 
                             ELEMENTREFERENCE: el,
                         });
                         path.replaceWithMultiple(replacement);
-                    } else if (node.arguments.length === 1) {
+                    } else if (node.arguments.length === 1) { // .click(e)
                         const rest = [path.node.arguments[0] as Expression];
                         replaceWithAddEventListener(path, stringLiteral(eventName), rest);
                     }

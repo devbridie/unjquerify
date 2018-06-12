@@ -1,6 +1,6 @@
 import {isStringLiteral, stringLiteral} from "babel-types";
 
-import {isJQueryWrappedElement, unWrapjQueryElement} from "../../util/jquery-heuristics";
+import {unWrapjQueryElement} from "../../util/jquery-heuristics";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../util/references";
 import {Plugin} from "../../model/plugin";
 
@@ -24,9 +24,10 @@ export const GetElementsByClassNamePlugin: Plugin = {
     babel: () => ({
         visitor: {
             CallExpression: (path) => {
-                if (!isJQueryWrappedElement(path.node)) return;
                 const unwrapped = unWrapjQueryElement(path.node);
+                if (!unwrapped) return;
                 if (!isStringLiteral(unwrapped)) return;
+
                 const literal = unwrapped.value;
                 if (!/^\.[a-zA-Z0-9]+$/.test(literal)) return;
                 const cssClass = literal.slice(1);

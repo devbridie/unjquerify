@@ -1,6 +1,6 @@
 import {isStringLiteral, stringLiteral} from "babel-types";
 
-import {isJQueryWrappedElement, unWrapjQueryElement} from "../../util/jquery-heuristics";
+import {unWrapjQueryElement} from "../../util/jquery-heuristics";
 import {Plugin} from "../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../util/references";
 
@@ -28,9 +28,10 @@ export const GetElementByIdPlugin: Plugin = {
                 $("#...") => $(document.getElementById("..."))
              */
             CallExpression: (path) => {
-                if (!isJQueryWrappedElement(path.node)) return;
                 const unwrapped = unWrapjQueryElement(path.node);
+                if (!unwrapped) return;
                 if (!isStringLiteral(unwrapped)) return;
+
                 const literal = unwrapped.value;
                 if (!/^#[a-zA-Z0-9]+$/.test(literal)) return;
                 const id = literal.slice(1);

@@ -22,6 +22,7 @@ export const TextGetPlugin: Plugin = {
                 const node = path.node;
                 if (!isMemberExpression(node.callee)) return;
                 if (!(isIdentifier(node.callee.property) && node.callee.property.name === "text")) return;
+
                 if (node.arguments.length !== 0) return;
                 const el = pullOutNativeElement(node.callee.object);
                 const textContent = memberExpression(el, identifier("textContent"));

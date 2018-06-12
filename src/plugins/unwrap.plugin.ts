@@ -10,7 +10,7 @@ import {
     MemberExpression,
     Node,
 } from "babel-types";
-import {isJQueryWrappedElement, unWrapjQueryElement} from "../util/jquery-heuristics";
+import {unWrapjQueryElement} from "../util/jquery-heuristics";
 import {NodePath} from "babel-traverse";
 import {Plugin} from "../model/plugin";
 import {jqueryApiReference} from "../util/references";
@@ -44,8 +44,8 @@ export const UnwrapPlugin: Plugin = {
                     const node = path.node;
                     if (!isIdentifier(node.property)) return;
                     if (node.property.name !== "0") return;
-                    if (!isJQueryWrappedElement(node.object)) return;
                     const arg = unWrapjQueryElement(node.object);
+                    if (!arg) return;
                     if (innerIsArray(arg)) {
                         const map = memberExpression(arg, identifier("map"));
                         const elementId = path.scope.generateUidIdentifier("element");

@@ -2,14 +2,12 @@ import {
     assignmentExpression,
     expressionStatement,
     identifier,
-    isIdentifier,
-    isMemberExpression,
     isSpreadElement,
     isStringLiteral,
     memberExpression,
 } from "babel-types";
 import camelcase from "camelcase";
-import {pullOutNativeElement} from "../../../util/jquery-heuristics";
+import {isCallOnjQuery, pullOutNativeElement} from "../../../util/jquery-heuristics";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 
@@ -29,8 +27,8 @@ export const CssSetPlugin: Plugin = {
         visitor: {
             CallExpression: (path) => {
                 const node = path.node;
-                if (!isMemberExpression(node.callee)) return;
-                if (!(isIdentifier(node.callee.property) && node.callee.property.name === "css")) return;
+                if (!isCallOnjQuery(node, "css")) return;
+
                 const [firstArg, secondArg] = path.node.arguments;
                 if (!(isStringLiteral(firstArg) && secondArg)) return;
 

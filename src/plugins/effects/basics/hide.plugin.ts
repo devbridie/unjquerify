@@ -1,14 +1,12 @@
 import {
     assignmentExpression,
     identifier,
-    isIdentifier,
-    isMemberExpression,
     memberExpression,
     stringLiteral,
 } from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
-import {pullOutNativeElement} from "../../../util/jquery-heuristics";
+import {isCallOnjQuery, pullOutNativeElement} from "../../../util/jquery-heuristics";
 
 export const HidePlugin: Plugin = {
     name: "HidePlugin",
@@ -26,8 +24,7 @@ export const HidePlugin: Plugin = {
         visitor: {
             CallExpression: (path) => {
                 const node = path.node;
-                if (!isMemberExpression(node.callee)) return;
-                if (!(isIdentifier(node.callee.property) && node.callee.property.name === "hide")) return;
+                if (!isCallOnjQuery(node, "hide")) return;
                 if (node.arguments.length !== 0) return;
 
                 const el = pullOutNativeElement(node.callee.object);

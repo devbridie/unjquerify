@@ -1,16 +1,7 @@
-import {
-    callExpression,
-    identifier,
-    isIdentifier,
-    isMemberExpression,
-    isStringLiteral,
-    memberExpression,
-    nullLiteral,
-    stringLiteral,
-} from "babel-types";
+import {callExpression, identifier, isStringLiteral, memberExpression, nullLiteral, stringLiteral} from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
-import {pullOutNativeElement} from "../../../util/jquery-heuristics";
+import {isCallOnjQuery, pullOutNativeElement} from "../../../util/jquery-heuristics";
 
 export const CssGetPlugin: Plugin = {
     name: "CssGetPlugin",
@@ -27,8 +18,7 @@ export const CssGetPlugin: Plugin = {
         visitor: {
             CallExpression: (path) => {
                 const node = path.node;
-                if (!isMemberExpression(node.callee)) return;
-                if (!(isIdentifier(node.callee.property) && node.callee.property.name === "css")) return;
+                if (!isCallOnjQuery(node, "css")) return;
                 if (node.arguments.length !== 1) return;
                 const el = pullOutNativeElement(node.callee.object);
 

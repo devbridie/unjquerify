@@ -1,14 +1,7 @@
-import {
-    assignmentExpression,
-    Expression,
-    identifier,
-    isIdentifier,
-    isMemberExpression,
-    memberExpression,
-} from "babel-types";
+import {assignmentExpression, Expression, identifier, memberExpression} from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
-import {pullOutNativeElement} from "../../../util/jquery-heuristics";
+import {isCallOnjQuery, pullOutNativeElement} from "../../../util/jquery-heuristics";
 
 export const TextSetPlugin: Plugin = {
     name: "TextSetPlugin",
@@ -26,8 +19,8 @@ export const TextSetPlugin: Plugin = {
         visitor: {
             CallExpression: (path) => {
                 const node = path.node;
-                if (!isMemberExpression(node.callee)) return;
-                if (!(isIdentifier(node.callee.property) && node.callee.property.name === "text")) return;
+                if (!isCallOnjQuery(node, "text")) return;
+
                 if (node.arguments.length !== 1) return;
                 const firstArg = node.arguments[0] as Expression;
 
