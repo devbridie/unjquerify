@@ -15,6 +15,8 @@ import {IsPlugin} from "./plugins/traversing/filtering/is.plugin";
 import {BodyPlugin} from "./plugins/selectors/body.plugin";
 import {AttrGetPlugin} from "./plugins/manipulation/general-attributes/attr.get.plugin";
 import {AttrSetPlugin} from "./plugins/manipulation/general-attributes/attr.set.plugin";
+import {HtmlGetPlugin} from "./plugins/manipulation/dom-insertion/html.get.plugin";
+import {HtmlSetPlugin} from "./plugins/manipulation/dom-insertion/html.set.plugin";
 
 export const plugins: Plugin[] = [
     DocumentReadyPlugin,
@@ -32,5 +34,7 @@ export const plugins: Plugin[] = [
     BodyPlugin,
     AttrGetPlugin,
     AttrSetPlugin,
+    HtmlGetPlugin,
+    HtmlSetPlugin,
     UnwrapPlugin,
 ];
