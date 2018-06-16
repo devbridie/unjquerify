@@ -13,6 +13,8 @@ import {DocumentReadyPlugin} from "./plugins/events/document-loading/document.re
 import {Plugin} from "./model/plugin";
 import {IsPlugin} from "./plugins/traversing/filtering/is.plugin";
 import {BodyPlugin} from "./plugins/selectors/body.plugin";
+import {AttrGetPlugin} from "./plugins/manipulation/general-attributes/attr.get.plugin";
+import {AttrSetPlugin} from "./plugins/manipulation/general-attributes/attr.set.plugin";
 
 export const plugins: Plugin[] = [
     DocumentReadyPlugin,
@@ -28,5 +30,7 @@ export const plugins: Plugin[] = [
     HidePlugin,
     IsPlugin,
     BodyPlugin,
+    AttrGetPlugin,
+    AttrSetPlugin,
     UnwrapPlugin,
 ];
