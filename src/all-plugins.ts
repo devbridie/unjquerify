@@ -12,6 +12,7 @@ import {TextGetPlugin} from "./plugins/manipulation/dom-insertion/text.get.plugi
 import {DocumentReadyPlugin} from "./plugins/events/document-loading/document.ready.plugin";
 import {Plugin} from "./model/plugin";
 import {IsPlugin} from "./plugins/traversing/filtering/is.plugin";
+import {BodyPlugin} from "./plugins/selectors/body.plugin";
 
 export const plugins: Plugin[] = [
     DocumentReadyPlugin,
@@ -25,6 +26,7 @@ export const plugins: Plugin[] = [
     TextSetPlugin,
     TextGetPlugin,
     HidePlugin,
-    UnwrapPlugin,
     IsPlugin,
+    BodyPlugin,
+    UnwrapPlugin,
 ];
