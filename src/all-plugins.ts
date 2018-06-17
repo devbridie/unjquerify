@@ -18,6 +18,7 @@ import {AttrSetPlugin} from "./plugins/manipulation/general-attributes/attr.set.
 import {HtmlGetPlugin} from "./plugins/manipulation/dom-insertion/html.get.plugin";
 import {HtmlSetPlugin} from "./plugins/manipulation/dom-insertion/html.set.plugin";
 import {RemovePlugin} from "./plugins/manipulation/dom-removal/remove.plugin";
+import {EmptyPlugin} from "./plugins/manipulation/dom-removal/empty.plugin";
 
 export const plugins: Plugin[] = [
     DocumentReadyPlugin,
@@ -38,5 +39,6 @@ export const plugins: Plugin[] = [
     HtmlGetPlugin,
     HtmlSetPlugin,
     RemovePlugin,
+    EmptyPlugin,
     UnwrapPlugin,
 ];
