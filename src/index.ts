@@ -1,31 +1,25 @@
 import * as babel from "babel-core";
 import * as fs from "fs";
-import * as path from "path";
 import {promisify} from "util";
 import {plugins} from "./all-plugins";
 
-const file = "../sample/simple.js";
+const cli = require("command-line-parser");
 
 (async () => {
-    const fullFilePath = path.resolve(__dirname, file);
-    const fileName = path.basename(fullFilePath);
-    const fileContents = await promisify(fs.readFile)(fullFilePath, "utf8");
-
-    console.log("Input:");
-    console.log(fileContents);
-    console.log("----");
-
+    const args: any = cli();
+    const file = (args._args && args._args[0]) || undefined;
+    const withInlineSourceMap = args.withInlineSourceMap;
+    if (!file) {
+        console.error("Please specify a file to convert as the first argument to this script.");
+        process.exit(1);
+        return;
+    }
+    const fileContents = await promisify(fs.readFile)(file, "utf8");
     const transformed = babel.transform(fileContents, {
         plugins: plugins.map(p => p.babel),
-        sourceMaps: true,
-        sourceFileName: fileName,
+        sourceMaps: withInlineSourceMap ? "inline" : false,
+        sourceFileName: file,
         ast: false,
     });
-
-    console.log("----");
-    console.log("Output:");
     console.log(transformed.code);
-
-    console.log("Map:");
-    console.log(transformed.map);
 })();
