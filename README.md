@@ -34,3 +34,14 @@ document.getElementById("submit").addEventListener("click", function () {
 * Run `npm build` in unjQuerify.
 * Run `npm install path/to/unjquerify` in your dependant package.
 * unjQuerify's plugins are exported in `unjquerify/build/src/all-plugins`.
+
+## Contributing
+Contributions are always welcome. Please see this [project's issue tracker](https://github.com/devbridie/unjquerify/issues).
+
+Some useful resources are the following: 
+* [Babel Plugin Handbook](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#babel-plugin-handbook)
+* [AST Explorer](https://astexplorer.net/#/gist/02b98eb0c96ef8d4762fb5a87a71b849/4ce7c810fc6e6aa48684a656f8b1b06b581e9b02)
+* [You Don't Need jQuery](https://github.com/nefe/You-Dont-Need-jQuery)
+* [jQuery API Documentation](http://api.jquery.com/)
+
+Before submitting a pull request, please verify that your changes pass linting (run with `npm run lint`). Please include tests for new features.
