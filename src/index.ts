@@ -1,7 +1,8 @@
 import * as babel from "babel-core";
 import * as fs from "fs";
 import {promisify} from "util";
-import {plugins} from "./all-plugins";
+// import {plugins} from "./all-plugins";
+import {jQueryExpressionPlugin} from "./plugins/jquery-expression.plugin";
 
 const cli = require("command-line-parser");
 
@@ -16,7 +17,7 @@ const cli = require("command-line-parser");
     }
     const fileContents = await promisify(fs.readFile)(file, "utf8");
     const transformed = babel.transform(fileContents, {
-        plugins: plugins.map(p => p.babel),
+        plugins: [jQueryExpressionPlugin],
         sourceMaps: withInlineSourceMap ? "inline" : false,
         sourceFileName: file,
         ast: false,

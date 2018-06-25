@@ -1,12 +1,15 @@
 import {callExpression, identifier, memberExpression} from "babel-types";
 
-import {isCallOnjQuery, pullOutNativeElement} from "../../../util/jquery-heuristics";
+import {isCallOnjQuery} from "../../../util/jquery-heuristics";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 import {Plugin} from "../../../model/plugin";
+import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
 
 export const IsPlugin: Plugin = {
     name: "IsPlugin",
     path: ["traversing", "filtering"],
+    causesChainMutation: false,
+    matchesExpressionType: new CallExpressionOfjQueryCollection("is"),
     references: [
         jqueryApiReference("is"),
         mdnReference("Element/matches"),
@@ -22,7 +25,7 @@ export const IsPlugin: Plugin = {
                 if (!isCallOnjQuery(node, "is")) return;
 
                 if (node.arguments.length !== 1) return;
-                const el = pullOutNativeElement(node.callee.object);
+                const el = node.callee.object;
 
                 const matches = memberExpression(el, identifier("matches"));
                 const call = callExpression(matches, [node.arguments[0]]);

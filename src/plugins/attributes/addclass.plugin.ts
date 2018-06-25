@@ -7,11 +7,14 @@ import {
 } from "babel-types";
 import {Plugin} from "../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../util/references";
-import {isCallOnjQuery, pullOutNativeElement} from "../../util/jquery-heuristics";
+import {isCallOnjQuery} from "../../util/jquery-heuristics";
+import {CallExpressionOfjQueryCollection} from "../../model/call-expression-of-jquery-collection";
 
 export const AddClassPlugin: Plugin = {
     name: "AddClassPlugin",
     path: ["attributes", "addclass"],
+    causesChainMutation: false,
+    matchesExpressionType: new CallExpressionOfjQueryCollection("addClass"),
     references: [
         jqueryApiReference("addClass"),
         mdnReference("Element/classList"),
@@ -29,7 +32,7 @@ export const AddClassPlugin: Plugin = {
                 if (node.arguments.length !== 1) return;
                 const firstArg = node.arguments[0];
                 if (!isStringLiteral(firstArg)) return;
-                const el = pullOutNativeElement(node.callee.object);
+                const el = node.callee.object;
 
                 const classList = memberExpression(el, identifier("classList"));
                 const add = memberExpression(classList, identifier("add"));

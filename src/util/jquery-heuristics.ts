@@ -1,19 +1,20 @@
 import {
     CallExpression,
     Expression,
-    identifier,
     isCallExpression,
     isIdentifier,
     isMemberExpression,
     MemberExpression,
-    memberExpression,
     Node,
 } from "babel-types";
 
-function isjQueryIdentifier(expr: Expression) {
+export function isjQueryKeyword(keyword: string) {
+    return keyword === "jQuery" || keyword === "$";
+}
+
+export function isjQueryIdentifier(expr: Expression) {
     if (!isIdentifier(expr)) return false;
-    const name = expr.name;
-    return name === "jQuery" || name === "$";
+    return isjQueryKeyword(expr.name);
 }
 
 /**
@@ -28,14 +29,6 @@ export function unWrapjQueryElement(node: Node): false | Expression {
     const isJqueryCallee = isjQueryIdentifier(callee);
     if (!isJqueryCallee) return false;
     return node.arguments[0] as Expression;
-}
-
-/**
- * Pulls out the first element in a jQuery-wrapped DOM collection.
- * Effectively $el => $el[0].
- */
-export function pullOutNativeElement(node: Expression): Expression {
-    return memberExpression(node, identifier("0"), true);
 }
 
 /**

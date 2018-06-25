@@ -7,13 +7,16 @@ import {
     memberExpression,
 } from "babel-types";
 import camelcase from "camelcase";
-import {isCallOnjQuery, pullOutNativeElement} from "../../../util/jquery-heuristics";
+import {isCallOnjQuery} from "../../../util/jquery-heuristics";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
+import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
 
 export const CssSetPlugin: Plugin = {
     name: "CssSetPlugin",
     path: ["manipulation", "style-properties", "css.set"],
+    matchesExpressionType: new CallExpressionOfjQueryCollection("css"),
+    causesChainMutation: false,
     references: [
         jqueryApiReference("css"),
         mdnReference("HTMLElement/style"),
@@ -32,7 +35,7 @@ export const CssSetPlugin: Plugin = {
                 const [firstArg, secondArg] = path.node.arguments;
                 if (!(isStringLiteral(firstArg) && secondArg)) return;
 
-                const el = pullOutNativeElement(node.callee.object);
+                const el = node.callee.object;
 
                 const style = memberExpression(el, identifier("style"));
 

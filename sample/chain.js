@@ -1,1 +1,1 @@
-$("a").fn1("test").fn2("test 2").fn3(function() { console.log("test"); });
+const b = $("a").addClass("underlined").find(".selected").hide().find("span").hide();

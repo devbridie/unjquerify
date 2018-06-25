@@ -1,11 +1,14 @@
 import {assignmentExpression, Expression, identifier, memberExpression} from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
-import {isCallOnjQuery, pullOutNativeElement} from "../../../util/jquery-heuristics";
+import {isCallOnjQuery} from "../../../util/jquery-heuristics";
+import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
 
 export const TextSetPlugin: Plugin = {
     name: "TextSetPlugin",
     path: ["manipulation", "dom-insertion", "text.set"],
+    causesChainMutation: false,
+    matchesExpressionType: new CallExpressionOfjQueryCollection("text"),
     references: [
         jqueryApiReference("text"),
         mdnReference("Node/textContent"),
@@ -24,7 +27,7 @@ export const TextSetPlugin: Plugin = {
                 if (node.arguments.length !== 1) return;
                 const firstArg = node.arguments[0] as Expression;
 
-                const el = pullOutNativeElement(node.callee.object);
+                const el = node.callee.object;
                 const textContent = memberExpression(el, identifier("textContent"));
                 const assignment = assignmentExpression("=", textContent, firstArg);
                 path.replaceWith(assignment);

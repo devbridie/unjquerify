@@ -1,11 +1,14 @@
 import {identifier, memberExpression} from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
-import {isCallOnjQuery, pullOutNativeElement} from "../../../util/jquery-heuristics";
+import {isCallOnjQuery} from "../../../util/jquery-heuristics";
+import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
 
 export const HtmlGetPlugin: Plugin = {
     name: "HtmlGetPlugin",
     path: ["manipulation", "dom-insertion", "html.get"],
+    causesChainMutation: false,
+    matchesExpressionType: new CallExpressionOfjQueryCollection("html"),
     references: [
         jqueryApiReference("html"),
         mdnReference("Element/innerHTML"),
@@ -22,7 +25,7 @@ export const HtmlGetPlugin: Plugin = {
                 if (!isCallOnjQuery(node, "html")) return;
                 if (node.arguments.length !== 0) return;
 
-                const el = pullOutNativeElement(node.callee.object);
+                const el = node.callee.object;
                 const innerHTML = memberExpression(el, identifier("innerHTML"));
                 path.replaceWith(innerHTML);
             },

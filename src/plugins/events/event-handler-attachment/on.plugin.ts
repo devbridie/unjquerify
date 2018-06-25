@@ -7,16 +7,17 @@ import {
     memberExpression,
     stringLiteral,
 } from "babel-types";
-import {NodePath} from "babel-traverse";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
-import {isCallOnjQuery, pullOutNativeElement} from "../../../util/jquery-heuristics";
+import {isCallOnjQuery} from "../../../util/jquery-heuristics";
+import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
+import {NodePath} from "babel-traverse";
 
 function replaceWithAddEventListener(path: NodePath<CallExpression>, eventName: Expression, rest: Expression[]) {
     const node = path.node;
     if (!isMemberExpression(node.callee)) return;
 
-    const el = pullOutNativeElement(node.callee.object);
+    const el = node.callee.object;
     const addEventListener = memberExpression(el, identifier("addEventListener"));
     const call = callExpression(addEventListener, [eventName, ...rest]);
     path.replaceWith(call);
@@ -35,6 +36,8 @@ ELEMENTREFERENCE.dispatchEvent(EVENTVARIABLENAME);
 export const OnPlugin: (eventName?: string) => Plugin = (eventName?: string) => ({
     name: "OnPlugin",
     path: ["events", "event-handler-attachment", "on"],
+    matchesExpressionType: new CallExpressionOfjQueryCollection("on"),
+    causesChainMutation: false,
     references: [
         jqueryApiReference("on"),
         mdnReference("EventTarget/addEventListener"),
@@ -57,7 +60,7 @@ export const OnPlugin: (eventName?: string) => Plugin = (eventName?: string) => 
                     if (!isCallOnjQuery(node, eventName)) return;
 
                     if (node.arguments.length === 0) { // .click()
-                        const el = pullOutNativeElement(node.callee.object);
+                        const el = node.callee.object;
                         const eventIdentifier = path.scope.generateUidIdentifier(eventName);
                         const replacement = triggerTemplate({
                             EVENTVARIABLENAME: eventIdentifier,

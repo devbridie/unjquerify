@@ -3,16 +3,19 @@ import {isStringLiteral} from "babel-types";
 import {unWrapjQueryElement} from "../../util/jquery-heuristics";
 import {Plugin} from "../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../util/references";
+import {CallExpressionOfjQueryGlobal} from "../../model/call-expression-of-jquery-global";
 
 const template = require("@babel/template");
 
-const replaceAstTemplate = template.expression(`$(document.querySelectorAll(SELECTOR))`,
+const replaceAstTemplate = template.expression(`document.querySelectorAll(SELECTOR)`,
     {placeholderPattern: /^[_A-Z0-9]+$/},
 );
 
 export const QuerySelectorAllPlugin: Plugin = {
     name: "QuerySelectorAllPlugin",
     path: ["selectors", "querySelectorAll"],
+    causesChainMutation: false,
+    matchesExpressionType: new CallExpressionOfjQueryGlobal(),
     references: [
         jqueryApiReference("jQuery"),
         mdnReference("Document/querySelectorAll"),

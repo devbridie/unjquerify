@@ -6,11 +6,14 @@ import {
 } from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
-import {isCallOnjQuery, pullOutNativeElement} from "../../../util/jquery-heuristics";
+import {isCallOnjQuery} from "../../../util/jquery-heuristics";
+import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
 
 export const HidePlugin: Plugin = {
     name: "HidePlugin",
     path: ["effects", "basics", "hide"],
+    causesChainMutation: false,
+    matchesExpressionType: new CallExpressionOfjQueryCollection("hide"),
     references: [
         jqueryApiReference("hide"),
         mdnReference("Element/classList"),
@@ -27,7 +30,7 @@ export const HidePlugin: Plugin = {
                 if (!isCallOnjQuery(node, "hide")) return;
                 if (node.arguments.length !== 0) return;
 
-                const el = pullOutNativeElement(node.callee.object);
+                const el = node.callee.object;
                 const style = memberExpression(el, identifier("style"));
                 const display = memberExpression(style, identifier("display"));
                 const assignment = assignmentExpression("=", display, stringLiteral("none"));

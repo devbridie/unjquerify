@@ -1,11 +1,14 @@
 import {callExpression, identifier, isStringLiteral, memberExpression, nullLiteral, stringLiteral} from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
-import {isCallOnjQuery, pullOutNativeElement} from "../../../util/jquery-heuristics";
+import {isCallOnjQuery} from "../../../util/jquery-heuristics";
+import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
 
 export const CssGetPlugin: Plugin = {
     name: "CssGetPlugin",
     path: ["manipulation", "style-properties", "css.get"],
+    matchesExpressionType: new CallExpressionOfjQueryCollection("css"),
+    causesChainMutation: false,
     references: [
         jqueryApiReference("css"),
         mdnReference("Window/getComputedStyle"),
@@ -20,7 +23,7 @@ export const CssGetPlugin: Plugin = {
                 const node = path.node;
                 if (!isCallOnjQuery(node, "css")) return;
                 if (node.arguments.length !== 1) return;
-                const el = pullOutNativeElement(node.callee.object);
+                const el = node.callee.object;
 
                 const getComputedStyle = identifier("getComputedStyle");
                 const computedStyle = callExpression(getComputedStyle, [el, nullLiteral()]);

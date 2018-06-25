@@ -3,6 +3,7 @@ import {isStringLiteral, stringLiteral} from "babel-types";
 import {unWrapjQueryElement} from "../../util/jquery-heuristics";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../util/references";
 import {Plugin} from "../../model/plugin";
+import {CallExpressionOfjQueryGlobal} from "../../model/call-expression-of-jquery-global";
 
 const template = require("@babel/template");
 
@@ -13,6 +14,8 @@ const replaceAstTemplate = template.expression(`$(document.getElementsByClassNam
 export const GetElementsByClassNamePlugin: Plugin = {
     name: "GetElementsByClassNamePlugin",
     path: ["selectors", "getElementsByClassName"],
+    causesChainMutation: false,
+    matchesExpressionType: new CallExpressionOfjQueryGlobal(),
     references: [
         jqueryApiReference("jQuery"),
         mdnReference("Document/getElementsByClassName"),

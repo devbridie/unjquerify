@@ -4,7 +4,6 @@ import {ClickHandlerPlugin} from "./plugins/events/mouse-events/click.handler.pl
 import {GetElementsByClassNamePlugin} from "./plugins/selectors/getElementsByClassName.plugin";
 import {TextSetPlugin} from "./plugins/manipulation/dom-insertion/text.set.plugin";
 import {AddClassPlugin} from "./plugins/attributes/addclass.plugin";
-import {UnwrapPlugin} from "./plugins/unwrap.plugin";
 import {GetElementByIdPlugin} from "./plugins/selectors/getElementById.plugin";
 import {HidePlugin} from "./plugins/effects/basics/hide.plugin";
 import {QuerySelectorAllPlugin} from "./plugins/selectors/querySelectorAll.plugin";
@@ -42,5 +41,4 @@ export const plugins: Plugin[] = [
     RemovePlugin,
     EmptyPlugin,
     FindPlugin,
-    UnwrapPlugin,
 ];

@@ -2,6 +2,7 @@ import {isFunctionExpression, isIdentifier, Node} from "babel-types";
 import {isCallOnjQuery, unWrapjQueryElement} from "../../../util/jquery-heuristics";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
+import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
 
 const template = require("@babel/template");
 
@@ -17,6 +18,8 @@ const replaceAstTemplate = template.statements(`
 export const DocumentReadyPlugin: Plugin = {
     name: "DocumentReadyPlugin",
     path: ["events", "document-loading", "document.ready"],
+    causesChainMutation: false,
+    matchesExpressionType: new CallExpressionOfjQueryCollection("hide"),
     references: [
         jqueryApiReference("ready"),
         mdnReference("Events/DOMContentLoaded"),
