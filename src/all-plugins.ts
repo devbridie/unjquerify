@@ -4,7 +4,6 @@ import {ClickHandlerPlugin} from "./plugins/events/mouse-events/click.handler.pl
 import {GetElementsByClassNamePlugin} from "./plugins/selectors/getElementsByClassName.plugin";
 import {TextSetPlugin} from "./plugins/manipulation/dom-insertion/text.set.plugin";
 import {AddClassPlugin} from "./plugins/attributes/addclass.plugin";
-import {GetElementByIdPlugin} from "./plugins/selectors/getElementById.plugin";
 import {HidePlugin} from "./plugins/effects/basics/hide.plugin";
 import {QuerySelectorAllPlugin} from "./plugins/selectors/querySelectorAll.plugin";
 import {TextGetPlugin} from "./plugins/manipulation/dom-insertion/text.get.plugin";
@@ -22,7 +21,6 @@ import {FindPlugin} from "./plugins/traversing/tree-traversal/find.plugin";
 
 export const plugins: Plugin[] = [
     DocumentReadyPlugin,
-    GetElementByIdPlugin,
     GetElementsByClassNamePlugin,
     QuerySelectorAllPlugin,
     CssGetPlugin,
