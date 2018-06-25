@@ -19,6 +19,7 @@ import {HtmlGetPlugin} from "./plugins/manipulation/dom-insertion/html.get.plugi
 import {HtmlSetPlugin} from "./plugins/manipulation/dom-insertion/html.set.plugin";
 import {RemovePlugin} from "./plugins/manipulation/dom-removal/remove.plugin";
 import {EmptyPlugin} from "./plugins/manipulation/dom-removal/empty.plugin";
+import {FindPlugin} from "./plugins/traversing/tree-traversal/find.plugin";
 
 export const plugins: Plugin[] = [
     DocumentReadyPlugin,
@@ -40,5 +41,6 @@ export const plugins: Plugin[] = [
     HtmlSetPlugin,
     RemovePlugin,
     EmptyPlugin,
+    FindPlugin,
     UnwrapPlugin,
 ];
