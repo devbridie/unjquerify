@@ -1,5 +1,5 @@
 import {
-    assignmentExpression,
+    assignmentExpression, callExpression,
     identifier,
     memberExpression,
     stringLiteral,
@@ -8,6 +8,8 @@ import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 import {isCallOnjQuery} from "../../../util/jquery-heuristics";
 import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
+import {continueChainOnVoid} from "../../../util/chain";
+import {arrayCollector} from "../../../util/collectors";
 
 export const HidePlugin: Plugin = {
     name: "HidePlugin",
@@ -30,11 +32,14 @@ export const HidePlugin: Plugin = {
                 if (!isCallOnjQuery(node, "hide")) return;
                 if (node.arguments.length !== 0) return;
 
-                const el = node.callee.object;
-                const style = memberExpression(el, identifier("style"));
-                const display = memberExpression(style, identifier("display"));
-                const assignment = assignmentExpression("=", display, stringLiteral("none"));
-                path.replaceWith(assignment);
+                const arr = node.callee.object;
+                continueChainOnVoid(path, arr, (elements) => {
+                    return arrayCollector(elements, path.scope, "forEach", (element) => {
+                        const style = memberExpression(element, identifier("style"));
+                        const display = memberExpression(style, identifier("display"));
+                        return assignmentExpression("=", display, stringLiteral("none"));
+                    });
+                });
             },
         },
     }),

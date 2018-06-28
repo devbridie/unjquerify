@@ -3,6 +3,8 @@ import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 import {isCallOnjQuery} from "../../../util/jquery-heuristics";
 import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
+import {continueChainOnVoid} from "../../../util/chain";
+import {arrayCollector} from "../../../util/collectors";
 
 export const EmptyPlugin: Plugin = {
     name: "EmptyPlugin",
@@ -25,10 +27,13 @@ export const EmptyPlugin: Plugin = {
                 if (!isCallOnjQuery(node, "empty")) return;
                 if (node.arguments.length !== 0) return;
 
-                const el = node.callee.object;
-                const innerHTML = memberExpression(el, identifier("innerHTML"));
-                const assignment = assignmentExpression("=", innerHTML, stringLiteral(""));
-                path.replaceWith(assignment);
+                const arr = node.callee.object;
+                continueChainOnVoid(path, arr, (elements) => {
+                    return arrayCollector(elements, path.scope, "forEach", (element) => {
+                        const innerHTML = memberExpression(element, identifier("innerHTML"));
+                        return assignmentExpression("=", innerHTML, stringLiteral(""));
+                    });
+                });
             },
         },
     }),

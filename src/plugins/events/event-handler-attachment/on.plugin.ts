@@ -1,5 +1,4 @@
 import {
-    CallExpression,
     callExpression,
     Expression,
     identifier,
@@ -9,26 +8,29 @@ import {
 } from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
-import {isCallOnjQuery} from "../../../util/jquery-heuristics";
+import {CallOnjQueryExpression, isCallOnjQuery} from "../../../util/jquery-heuristics";
 import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
 import {NodePath} from "babel-traverse";
+import {continueChainOnVoid} from "../../../util/chain";
+import {arrayCollector} from "../../../util/collectors";
 
-function replaceWithAddEventListener(path: NodePath<CallExpression>, eventName: Expression, rest: Expression[]) {
+function replaceWithAddEventListener(path: NodePath<CallOnjQueryExpression>, eventName: Expression,
+                                     rest: Expression[]) {
     const node = path.node;
-    if (!isMemberExpression(node.callee)) return;
-
     const el = node.callee.object;
-    const addEventListener = memberExpression(el, identifier("addEventListener"));
-    const call = callExpression(addEventListener, [eventName, ...rest]);
-    path.replaceWith(call);
+    continueChainOnVoid(path, el, (elements) => {
+        return arrayCollector(elements, path.scope, "forEach", (element) => {
+            const addEventListener = memberExpression(element, identifier("addEventListener"));
+            return callExpression(addEventListener, [eventName, ...rest]);
+        });
+    });
 }
 
 const template = require("@babel/template");
 
-const triggerTemplate = template.expression(`
+const initEventTemplate = template.expression(`
 const EVENTVARIABLENAME = document.createEvent('HTMLEvents');
 EVENTVARIABLENAME.initEvent(type, false, true);
-ELEMENTREFERENCE.dispatchEvent(EVENTVARIABLENAME);
 `,
     {placeholderPattern: /^[_A-Z0-9]+$/},
 );
@@ -55,21 +57,28 @@ export const OnPlugin: (eventName?: string) => Plugin = (eventName?: string) => 
                     const firstArg = path.node.arguments[0] as Expression;
                     if (!isCallOnjQuery(node, "on")) return;
                     if (node.arguments.length !== 2) return;
-                    replaceWithAddEventListener(path, firstArg, path.node.arguments.slice(1) as Expression[]);
+                    replaceWithAddEventListener(path as NodePath<CallOnjQueryExpression>, firstArg,
+                        path.node.arguments.slice(1) as Expression[]);
                 } else {
                     if (!isCallOnjQuery(node, eventName)) return;
+                    const pathC = path as NodePath<CallOnjQueryExpression>;
 
                     if (node.arguments.length === 0) { // .click()
                         const el = node.callee.object;
                         const eventIdentifier = path.scope.generateUidIdentifier(eventName);
-                        const replacement = triggerTemplate({
+                        const replacement = initEventTemplate({
                             EVENTVARIABLENAME: eventIdentifier,
-                            ELEMENTREFERENCE: el,
                         });
-                        path.replaceWithMultiple(replacement);
+                        path.insertBefore(replacement);
+                        continueChainOnVoid(path, el, (elements) => {
+                            return arrayCollector(elements, path.scope, "forEach", (element) => {
+                                const dispatchEvent = memberExpression(element, identifier("dispatchEvent"));
+                                return callExpression(dispatchEvent, [eventIdentifier]);
+                            });
+                        });
                     } else if (node.arguments.length === 1) { // .click(e)
                         const rest = [path.node.arguments[0] as Expression];
-                        replaceWithAddEventListener(path, stringLiteral(eventName), rest);
+                        replaceWithAddEventListener(pathC, stringLiteral(eventName), rest);
                     }
                 }
             },

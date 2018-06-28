@@ -1,8 +1,10 @@
-import {callExpression, identifier, memberExpression} from "babel-types";
+import {assignmentExpression, callExpression, identifier, memberExpression, stringLiteral} from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 import {isCallOnjQuery} from "../../../util/jquery-heuristics";
 import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
+import {arrayCollector} from "../../../util/collectors";
+import {continueChainOnVoid} from "../../../util/chain";
 
 export const AttrSetPlugin: Plugin = {
     name: "AttrSetPlugin",
@@ -25,10 +27,14 @@ export const AttrSetPlugin: Plugin = {
                 if (node.arguments.length !== 2) return;
                 const property = node.arguments[0];
                 const value = node.arguments[1];
-                const el = node.callee.object;
-                const getAttribute = memberExpression(el, identifier("setAttribute"));
-                const callWithArg = callExpression(getAttribute, [property, value]);
-                path.replaceWith(callWithArg);
+
+                const arr = node.callee.object;
+                continueChainOnVoid(path, arr, (elements) => {
+                    return arrayCollector(elements, path.scope, "forEach", (element) => {
+                        const getAttribute = memberExpression(element, identifier("setAttribute"));
+                        return callExpression(getAttribute, [property, value]);
+                    });
+                });
             },
         },
     }),

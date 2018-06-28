@@ -1,4 +1,4 @@
-import {isCallOnjQuery, isjQueryIdentifier} from "../util/jquery-heuristics";
+import {CallOnjQueryExpression, isCallOnjQuery, isjQueryIdentifier} from "../util/jquery-heuristics";
 import {
     CallExpression,
     Expression,
@@ -36,6 +36,6 @@ export function matchesCallExpressionOfjQueryGlobal(expression: Expression): boo
 }
 
 // Shaped like $(...).a();
-export function matchesCallExpressionOfjQueryCollection(expression: Expression): boolean {
+export function matchesCallExpressionOfjQueryCollection(expression: Expression): expression is CallOnjQueryExpression {
     return isCallOnjQuery(expression);
 }

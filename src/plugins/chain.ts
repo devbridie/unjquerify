@@ -19,8 +19,14 @@ function chainToMemberList(expr: CallExpression, acc: Link[] = []): Link[] {
 
 function getLeftMost(expr: CallExpression): Expression {
     const callee = expr.callee;
-    if (isMemberExpression(callee) && isCallExpression(callee.object)) {
-        return getLeftMost(callee.object);
+    if (isMemberExpression(callee)) {
+        if (isCallExpression(callee.object)) {
+            return getLeftMost(callee.object);
+        } else if (isIdentifier(callee.object)) {
+            return callee.object
+        } else {
+            return expr;
+        }
     } else return expr;
 }
 

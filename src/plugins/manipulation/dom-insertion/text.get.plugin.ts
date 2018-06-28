@@ -1,8 +1,8 @@
-import * as babel from "babel-core";
 import {identifier, isIdentifier, isMemberExpression, memberExpression} from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
+import {firstOfArray} from "../../../util/collectors";
 
 export const TextGetPlugin: Plugin = {
     name: "TextGetPlugin",
@@ -26,10 +26,10 @@ export const TextGetPlugin: Plugin = {
                 if (!(isIdentifier(node.callee.property) && node.callee.property.name === "text")) return;
 
                 if (node.arguments.length !== 0) return;
-                const el = node.callee.object;
+                const el = firstOfArray(node.callee.object);
                 const textContent = memberExpression(el, identifier("textContent"));
                 path.replaceWith(textContent);
             },
-        } as babel.Visitor<{}>,
+        },
     }),
 };

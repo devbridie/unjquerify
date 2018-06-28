@@ -3,6 +3,8 @@ import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 import {isCallOnjQuery} from "../../../util/jquery-heuristics";
 import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
+import {continueChainOnVoid} from "../../../util/chain";
+import {arrayCollector} from "../../../util/collectors";
 
 export const TextSetPlugin: Plugin = {
     name: "TextSetPlugin",
@@ -27,10 +29,13 @@ export const TextSetPlugin: Plugin = {
                 if (node.arguments.length !== 1) return;
                 const firstArg = node.arguments[0] as Expression;
 
-                const el = node.callee.object;
-                const textContent = memberExpression(el, identifier("textContent"));
-                const assignment = assignmentExpression("=", textContent, firstArg);
-                path.replaceWith(assignment);
+                const arr = node.callee.object;
+                continueChainOnVoid(path, arr, (elements) => {
+                    return arrayCollector(elements, path.scope, "forEach", (element) => {
+                        const textContent = memberExpression(element, identifier("textContent"));
+                        return assignmentExpression("=", textContent, firstArg);
+                    });
+                });
             },
         },
     }),

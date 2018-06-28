@@ -1,8 +1,10 @@
-import {callExpression, identifier, memberExpression} from "babel-types";
+import {assignmentExpression, callExpression, identifier, memberExpression, stringLiteral} from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 import {isCallOnjQuery} from "../../../util/jquery-heuristics";
 import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
+import {arrayCollector} from "../../../util/collectors";
+import {continueChainOnVoid} from "../../../util/chain";
 
 export const RemovePlugin: Plugin = {
     name: "RemovePlugin",
@@ -26,11 +28,14 @@ export const RemovePlugin: Plugin = {
 
                 if (node.arguments.length !== 0) return; // TODO write args == 1 case
 
-                const el = node.callee.object;
-                const parentNode = memberExpression(el, identifier("parentNode"));
-                const removeChild = memberExpression(parentNode, identifier("removeChild"));
-                const call = callExpression(removeChild, [el]);
-                path.replaceWith(call);
+                const arr = node.callee.object;
+                continueChainOnVoid(path, arr, (elements) => {
+                    return arrayCollector(elements, path.scope, "forEach", (el) => {
+                        const parentNode = memberExpression(el, identifier("parentNode"));
+                        const removeChild = memberExpression(parentNode, identifier("removeChild"));
+                        return callExpression(removeChild, [el]);
+                    });
+                });
             },
         },
     }),

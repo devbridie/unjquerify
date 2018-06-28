@@ -3,12 +3,13 @@ import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 import {isCallOnjQuery} from "../../../util/jquery-heuristics";
 import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
+import {firstOfArray} from "../../../util/collectors";
 
 export const CssGetPlugin: Plugin = {
     name: "CssGetPlugin",
     path: ["manipulation", "style-properties", "css.get"],
     matchesExpressionType: new CallExpressionOfjQueryCollection("css"),
-    causesChainMutation: false,
+    causesChainMutation: true,
     references: [
         jqueryApiReference("css"),
         mdnReference("Window/getComputedStyle"),
@@ -23,7 +24,7 @@ export const CssGetPlugin: Plugin = {
                 const node = path.node;
                 if (!isCallOnjQuery(node, "css")) return;
                 if (node.arguments.length !== 1) return;
-                const el = node.callee.object;
+                const el = firstOfArray(node.callee.object);
 
                 const getComputedStyle = identifier("getComputedStyle");
                 const computedStyle = callExpression(getComputedStyle, [el, nullLiteral()]);

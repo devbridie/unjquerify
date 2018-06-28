@@ -6,7 +6,7 @@ import {
     expressionStatement,
     Identifier,
     identifier,
-    isExpressionStatement,
+    isExpressionStatement, isIdentifier,
     isVariableDeclaration,
     isVariableDeclarator,
     memberExpression,
@@ -25,8 +25,8 @@ function generateAssignment(expr: Expression, id: Identifier): Statement {
     return variableDeclaration("const", [variableDeclarator(id, expr)]);
 }
 
-function linkToCallExpression(id: Identifier, link: Link): CallExpression {
-    return callExpression(memberExpression(id, identifier(link.methodName)), link.arguments);
+function linkToCallExpression(object: Expression, link: Link): CallExpression {
+    return callExpression(memberExpression(object, identifier(link.methodName)), link.arguments);
 }
 
 const collectionPlugins =
@@ -46,21 +46,35 @@ function generateStatements(path: NodePath<CallExpression>, chain: Chain, endWit
         ];
     }
 
-    let currentChainIdentifier = path.scope.generateUidIdentifier("chain");
-    const statements: Statement[] = [generateAssignment(chain.leftmost, currentChainIdentifier)];
+    let currentChainIdentifier = path.scope.generateUidIdentifier("start");
+    const statements: Statement[] = [];
     for (let i = 0; i < chain.links.length; i++) {
         const hasMutation = linkMutatations[i];
         const link = chain.links[i];
-        if (hasMutation) {
-            const expr = linkToCallExpression(currentChainIdentifier, link);
-            if (endWithIdentifier && i === linkMutatations.lastIndexOf(true)) {
-                currentChainIdentifier = endWithIdentifier;
+        if (i === 0) {
+            if (hasMutation) {
+                const expr = linkToCallExpression(chain.leftmost, link);
+                statements.push(generateAssignment(expr, currentChainIdentifier));
             } else {
-                currentChainIdentifier = path.scope.generateUidIdentifier("chain");
+                if (isIdentifier(chain.leftmost)) {
+                    currentChainIdentifier = chain.leftmost;
+                } else {
+                    const expr = linkToCallExpression(chain.leftmost, link);
+                    statements.push(generateAssignment(expr, currentChainIdentifier));
+                }
             }
-            statements.push(generateAssignment(expr, currentChainIdentifier));
         } else {
-            statements.push(expressionStatement(linkToCallExpression(currentChainIdentifier, link)));
+            if (hasMutation) {
+                const expr = linkToCallExpression(currentChainIdentifier, link);
+                if (endWithIdentifier && i === linkMutatations.lastIndexOf(true)) {
+                    currentChainIdentifier = endWithIdentifier;
+                } else {
+                    currentChainIdentifier = path.scope.generateUidIdentifier("chain");
+                }
+                statements.push(generateAssignment(expr, currentChainIdentifier));
+            } else {
+                statements.push(expressionStatement(linkToCallExpression(currentChainIdentifier, link)));
+            }
         }
     }
 

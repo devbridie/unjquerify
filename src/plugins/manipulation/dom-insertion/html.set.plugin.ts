@@ -1,8 +1,10 @@
-import {assignmentExpression, identifier, isExpression, memberExpression} from "babel-types";
+import {assignmentExpression, identifier, isExpression, memberExpression, stringLiteral} from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 import {isCallOnjQuery} from "../../../util/jquery-heuristics";
 import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
+import {continueChainOnVoid} from "../../../util/chain";
+import {arrayCollector} from "../../../util/collectors";
 
 export const HtmlSetPlugin: Plugin = {
     name: "HtmlSetPlugin",
@@ -29,10 +31,13 @@ export const HtmlSetPlugin: Plugin = {
                 const firstArg = node.arguments[0];
                 if (!isExpression(firstArg)) return;
 
-                const el = node.callee.object;
-                const innerHTML = memberExpression(el, identifier("innerHTML"));
-                const assignment = assignmentExpression("=", innerHTML, firstArg);
-                path.replaceWith(assignment);
+                const arr = node.callee.object;
+                continueChainOnVoid(path, arr, (elements) => {
+                    return arrayCollector(elements, path.scope, "forEach", (element) => {
+                        const innerHTML = memberExpression(element, identifier("innerHTML"));
+                        return assignmentExpression("=", innerHTML, firstArg);
+                    });
+                });
             },
         },
     }),
