@@ -1,1 +1,2 @@
-const b = $("a").addClass("underlined").find(".selected").hide().find("span").hide();
+const b = $("a");
+b.hide().addClass("test");

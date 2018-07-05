@@ -1,42 +1,14 @@
-import {assignmentExpression, Expression, identifier, memberExpression} from "babel-types";
+import {assignmentExpression, identifier, memberExpression} from "babel-types";
 import {Plugin} from "../../../model/plugin";
-import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
-import {isCallOnjQuery} from "../../../util/jquery-heuristics";
-import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
-import {continueChainOnVoid} from "../../../util/chain";
-import {arrayCollector} from "../../../util/collectors";
+import {CallExpressionOfjQueryCollection} from "../../../model/matchers/call-expression-of-jquery-collection";
+import {ReturnSelf} from "../../../model/return-types/return-self";
 
 export const TextSetPlugin: Plugin = {
-    name: "TextSetPlugin",
-    path: ["manipulation", "dom-insertion", "text.set"],
-    causesChainMutation: false,
+    returnType: new ReturnSelf(),
     matchesExpressionType: new CallExpressionOfjQueryCollection("text"),
-    references: [
-        jqueryApiReference("text"),
-        mdnReference("Node/textContent"),
-        youDontNeedJquery("3.2"),
-    ],
-    fromExample: `$el.text("new text")`,
-    toExample: `el.textContent = "new text"`,
-    description: `Converts $el.text(...) calls.`,
-
-    babel: () => ({
-        visitor: {
-            CallExpression: (path) => {
-                const node = path.node;
-                if (!isCallOnjQuery(node, "text")) return;
-
-                if (node.arguments.length !== 1) return;
-                const firstArg = node.arguments[0] as Expression;
-
-                const arr = node.callee.object;
-                continueChainOnVoid(path, arr, (elements) => {
-                    return arrayCollector(elements, path.scope, "forEach", (element) => {
-                        const textContent = memberExpression(element, identifier("textContent"));
-                        return assignmentExpression("=", textContent, firstArg);
-                    });
-                });
-            },
-        },
-    }),
+    applicableWithArguments: (args) => args.length === 1,
+    replaceWith: (element, [text]) => {
+        const textContent = memberExpression(element, identifier("textContent"));
+        return assignmentExpression("=", textContent, text);
+    },
 };

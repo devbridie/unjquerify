@@ -23,7 +23,7 @@ function getLeftMost(expr: CallExpression): Expression {
         if (isCallExpression(callee.object)) {
             return getLeftMost(callee.object);
         } else if (isIdentifier(callee.object)) {
-            return callee.object
+            return callee.object;
         } else {
             return expr;
         }

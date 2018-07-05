@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`collectors chain > value 1`] = `
+"const _start = $(\\"div\\");
+
+_start.style.display = \\"none\\";
+const size = _start[0].css(\\"font-size\\");"
+`;
+
+exports[`collectors chain 1`] = `
+"const chain = $(\\"div\\");
+const divs = chain.style.display = \\"none\\";"
+`;
+
+exports[`collectors value 1`] = `
+"const chain = $(\\"div\\");
+const fontSize = getComputedStyle(chain)[\\"font-size\\"];"
+`;

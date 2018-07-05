@@ -1,38 +1,15 @@
 import {callExpression, identifier, memberExpression} from "babel-types";
-
-import {isCallOnjQuery} from "../../../util/jquery-heuristics";
-import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../../util/references";
 import {Plugin} from "../../../model/plugin";
-import {CallExpressionOfjQueryCollection} from "../../../model/call-expression-of-jquery-collection";
-import {arrayCollector} from "../../../util/collectors";
+import {CallExpressionOfjQueryCollection} from "../../../model/matchers/call-expression-of-jquery-collection";
+import {ReturnMutatedJQuery} from "../../../model/return-types/return-mutated-jQuery";
 
 export const IsPlugin: Plugin = {
-    name: "IsPlugin",
-    path: ["traversing", "filtering"],
-    causesChainMutation: false,
+    // returnType: new ReturnValue((array, scope, singleElement) => arrayCollector(array, scope, "some", singleElement)),
+    returnType: new ReturnMutatedJQuery(),
     matchesExpressionType: new CallExpressionOfjQueryCollection("is"),
-    references: [
-        jqueryApiReference("is"),
-        mdnReference("Element/matches"),
-        youDontNeedJquery("3.8"),
-    ],
-    fromExample: `$el.is(selectorString)")`,
-    toExample: `el.matches(selectorString)`,
-    description: `Converts $el.is(string) calls.`,
-    babel: () => ({
-        visitor: {
-            CallExpression: (path) => {
-                const node = path.node;
-                if (!isCallOnjQuery(node, "is")) return;
-                if (node.arguments.length !== 1) return;
-
-                const array = node.callee.object;
-                const wrapper = arrayCollector(array, path.scope, "some", (element) => {
-                    const matches = memberExpression(element, identifier("matches"));
-                    return callExpression(matches, [node.arguments[0]]);
-                });
-                path.replaceWith(wrapper);
-            },
-        },
-    }),
+    applicableWithArguments: (args) => args.length === 1,
+    replaceWith: (element, [selector]) => {
+        const matches = memberExpression(element, identifier("matches"));
+        return callExpression(matches, [selector]);
+    },
 };

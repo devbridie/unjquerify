@@ -1,38 +1,15 @@
-import {isStringLiteral} from "babel-types";
-
-import {unWrapjQueryElement} from "../../util/jquery-heuristics";
+import {callExpression, identifier, memberExpression} from "babel-types";
 import {Plugin} from "../../model/plugin";
-import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../util/references";
-import {CallExpressionOfjQueryGlobal} from "../../model/call-expression-of-jquery-global";
-
-const template = require("@babel/template");
-
-const replaceAstTemplate = template.expression(`document.querySelectorAll(SELECTOR)`,
-    {placeholderPattern: /^[_A-Z0-9]+$/},
-);
+import {CallExpressionOfjQueryGlobal} from "../../model/matchers/call-expression-of-jquery-global";
+import {ReturnMutatedJQuery} from "../../model/return-types/return-mutated-jQuery";
 
 export const QuerySelectorAllPlugin: Plugin = {
-    name: "QuerySelectorAllPlugin",
-    path: ["selectors", "querySelectorAll"],
-    causesChainMutation: false,
+    returnType: new ReturnMutatedJQuery(),
     matchesExpressionType: new CallExpressionOfjQueryGlobal(),
-    references: [
-        jqueryApiReference("jQuery"),
-        mdnReference("Document/querySelectorAll"),
-        youDontNeedJquery("1.0"),
-    ],
-    fromExample: `$("<selector>")`,
-    toExample: `$(document.querySelectorAll("<selector>"))`,
-    description: `Converts $("<selector>") calls.`,
-
-    babel: () => ({
-        visitor: {
-            CallExpression: (path) => {
-                const unwrapped = unWrapjQueryElement(path.node);
-                if (!unwrapped) return;
-                if (!isStringLiteral(unwrapped)) return;
-                path.replaceWith(replaceAstTemplate({SELECTOR: unwrapped}));
-            },
-        },
-    }),
+    applicableWithArguments: (args) => args.length === 1,
+    replaceWith: (element, [arg]) => {
+        const document = identifier("document");
+        const querySelectorAll = memberExpression(document, identifier("querySelectorAll"));
+        return callExpression(querySelectorAll, [arg]);
+    },
 };

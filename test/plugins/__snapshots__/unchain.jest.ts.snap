@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`unchain as assignment rval transforms child mutated expression correctly as value 1`] = `
+"const _start = $(\\"div\\");
+
+_start.addClass(\\"clazz\\");
+
+const _chain = _start.find(\\"a\\");
+
+const fontSize = _chain[0].css(\\"font-size\\");"
+`;
+
+exports[`unchain as assignment rval transforms mutated expression correctly 1`] = `
+"const _start = $(\\"div\\");
+
+_start.addClass(\\"clazz\\");
+
+const fontSize = _start[0].css(\\"font-size\\");"
+`;
+
+exports[`unchain as assignment rval transforms mutationless expression correctly 1`] = `
+"const _start = $(\\"a\\");
+
+_start.addClass(\\"clazz\\");
+
+_start.hide();
+
+const fontSize = _start[0].css(\\"font-size\\");"
+`;
+
+exports[`unchain as assignment rval transforms mutationless expression correctly value 1`] = `
+"const as = $(\\"a\\");
+
+_start.addClass(\\"clazz\\");
+
+_start.hide();
+
+_start.css(\\"font-size\\", 12);"
+`;
+
+exports[`unchain as statement transforms mutated expression correctly 1`] = `
+"const _start = $(\\"div\\");
+
+_start.addClass(\\"clazz\\");
+
+const _chain = _start.find(\\"a\\");
+
+_chain.css(\\"font-size\\", 12);"
+`;
+
+exports[`unchain as statement transforms mutationless expression correctly 1`] = `
+"const _start = $(\\"a\\");
+
+_start.addClass(\\"clazz\\");
+
+_start.hide();
+
+_start.css(\\"font-size\\", 12);"
+`;
+
+exports[`unchain short chain transforms self 1`] = `"const as = $(\\"a\\").addClass(\\"clazz\\");"`;

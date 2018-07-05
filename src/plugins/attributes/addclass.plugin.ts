@@ -1,44 +1,29 @@
-import {callExpression, identifier, isStringLiteral, memberExpression, stringLiteral,} from "babel-types";
+import {
+    callExpression,
+    identifier,
+    isStringLiteral,
+    memberExpression,
+    spreadElement,
+    stringLiteral,
+} from "babel-types";
 import {Plugin} from "../../model/plugin";
-import {jqueryApiReference, mdnReference, youDontNeedJquery} from "../../util/references";
-import {isCallOnjQuery} from "../../util/jquery-heuristics";
-import {CallExpressionOfjQueryCollection} from "../../model/call-expression-of-jquery-collection";
-import {arrayCollector} from "../../util/collectors";
-import {continueChainOnVoid} from "../../util/chain";
+import {CallExpressionOfjQueryCollection} from "../../model/matchers/call-expression-of-jquery-collection";
+import {ReturnSelf} from "../../model/return-types/return-self";
+import {nestedMemberExpressions} from "../../util/babel";
 
 export const AddClassPlugin: Plugin = {
-    name: "AddClassPlugin",
-    path: ["attributes", "addclass"],
-    causesChainMutation: false,
+    returnType: new ReturnSelf(),
     matchesExpressionType: new CallExpressionOfjQueryCollection("addClass"),
-    references: [
-        jqueryApiReference("addClass"),
-        mdnReference("Element/classList"),
-        youDontNeedJquery("2.1"),
-    ],
-    fromExample: `$el.addClass("selected")`,
-    toExample: `el.classList.add(className)`,
-    description: `Converts $el.addClass calls.`,
-
-    babel: () => ({
-        visitor: {
-            CallExpression: (path) => {
-                const node = path.node;
-                if (!isCallOnjQuery(node, "addClass")) return;
-                if (node.arguments.length !== 1) return;
-                const firstArg = node.arguments[0];
-                if (!isStringLiteral(firstArg)) return;
-
-                const arr = node.callee.object;
-                continueChainOnVoid(path, arr, (elements) => {
-                    return arrayCollector(elements, path.scope, "forEach", (element) => {
-                        const classList = memberExpression(element, identifier("classList"));
-                        const add = memberExpression(classList, identifier("add"));
-                        const classes = firstArg.value.split(" ");
-                        return callExpression(add, classes.map(name => stringLiteral(name)));
-                    });
-                });
-            },
-        },
+    applicableWithArguments: (args) => args.length === 1,
+    replaceWith: ((element, [arg]) => {
+        const classListAdd = nestedMemberExpressions(element, ["classList", "add"]);
+        if (isStringLiteral(arg)) {
+            const classes = arg.value.split(" ");
+            return callExpression(classListAdd, classes.map(name => stringLiteral(name)));
+        } else {
+            const split = memberExpression(arg, identifier("split"));
+            const callSplit = callExpression(split, [stringLiteral(" ")]);
+            return callExpression(classListAdd, [spreadElement(callSplit)]);
+        }
     }),
 };

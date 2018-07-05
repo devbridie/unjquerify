@@ -1,15 +1,11 @@
-import {Node, PluginObj} from "babel-core";
-import {Reference} from "./reference";
-import {JQueryExpressionType} from "./jquery-expression-type";
+import {JQueryExpressionType} from "./matchers/jquery-expression-type";
+import {ReturnType} from "./return-types/return-type";
+import {Expression, SpreadElement, Statement} from "babel-types";
+import {Scope} from "babel-traverse";
 
 export interface Plugin {
-    name: string;
-    path: string[];
-    babel: () => PluginObj<Node>;
-    causesChainMutation: boolean;
     matchesExpressionType: JQueryExpressionType;
-    references: Reference[];
-    fromExample: string;
-    toExample: string;
-    description: string;
+    applicableWithArguments: (args: Array<Expression | SpreadElement>) => boolean;
+    returnType: ReturnType;
+    replaceWith: (element: Expression, args: Expression[], scope: Scope) => Expression | Statement[];
 }
