@@ -1,10 +1,10 @@
 import {callExpression, identifier, memberExpression} from "babel-types";
 import {Plugin} from "../../model/plugin";
 import {CallExpressionOfjQueryGlobal} from "../../model/matchers/call-expression-of-jquery-global";
-import {ReturnMutatedJQuery} from "../../model/return-types/return-mutated-jQuery";
+import {ReturnValue} from "../../model/return-types/return-value";
 
 export const QuerySelectorAllPlugin: Plugin = {
-    returnType: new ReturnMutatedJQuery(),
+    returnType: new ReturnValue(),
     matchesExpressionType: new CallExpressionOfjQueryGlobal(),
     applicableWithArguments: (args) => args.length === 1,
     replaceWith: (element, [arg]) => {

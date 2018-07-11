@@ -60,10 +60,9 @@ function generateStatements(path: NodePath<CallExpression>,
         if (returnType instanceof ReturnSelf) {
             statements.push(expressionStatement(linkToCallExpression(lastChainVariable, link)));
         } else if (returnType instanceof ReturnValue) {
-            const lambdaArg = path.scope.generateUidIdentifier("lambda");
             const newChain = path.scope.generateUidIdentifier("chain");
-            const collector = returnType.collector(lastChainVariable, path.scope, lambdaArg);
-            statements.push(generateAssignment(linkToCallExpression(collector, link), newChain));
+            statements.push(generateAssignment(linkToCallExpression(lastChainVariable, link), newChain));
+            lastChainVariable = newChain;
         } else {
             const newChain = path.scope.generateUidIdentifier("chain");
             statements.push(generateAssignment(linkToCallExpression(lastChainVariable, link), newChain));

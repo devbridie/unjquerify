@@ -5,8 +5,8 @@ import {firstOfArray} from "../../../util/collectors";
 import {ReturnValue} from "../../../model/return-types/return-value";
 
 export const TextGetPlugin: Plugin = {
-    returnType: new ReturnValue(array => firstOfArray(array)),
+    returnType: new ReturnValue(),
     matchesExpressionType: new CallExpressionOfjQueryCollection("text"),
     applicableWithArguments: (args) => args.length === 0,
-    replaceWith: (element) => memberExpression(element, identifier("textContent")),
+    replaceWith: (element) => memberExpression(firstOfArray(element), identifier("textContent")),
 };

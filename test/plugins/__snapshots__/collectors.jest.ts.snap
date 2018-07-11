@@ -4,12 +4,16 @@ exports[`collectors chain > value 1`] = `
 "const _start = document.querySelectorAll(\\"div\\");
 
 _start.style.display = \\"none\\";
-const size = _start[0].css(\\"font-size\\");"
+const size = getComputedStyle(_start[0])[\\"font-size\\"];"
 `;
 
 exports[`collectors chain 1`] = `
 "const divs = document.querySelectorAll(\\"div\\");
 divs.forEach(_element => _element.style.display = \\"none\\");"
 `;
+
+exports[`collectors example: find 1`] = `"const children = [].concat(...document.querySelectorAll(\\"div\\").map(_element => _element.querySelectorAll(\\".article\\")));"`;
+
+exports[`collectors example: is 1`] = `"const matching = document.querySelectorAll(\\"div\\").some(_element => _element.matches(\\".article\\"));"`;
 
 exports[`collectors value 1`] = `"const fontSize = getComputedStyle(document.querySelectorAll(\\"div\\")[0])[\\"font-size\\"];"`;

@@ -67,16 +67,14 @@ export const jQueryExpressionPlugin: (plugins: Plugin[]) => { visitor: Visitor }
                                 parent.replaceWith(variableDeclarator(parent.node.id, chain.leftmost));
                                 const id = path.scope.generateUidIdentifier("element");
                                 const collected = arrayCollector(parent.node.id as Expression,
-                                    path.scope, "forEach", id, (ele) => {
+                                    "forEach", id, (ele) => {
                                         return plugin.replaceWith(ele, args, path.scope) as Expression;
                                     });
                                 parent.getStatementParent().insertAfter(expressionStatement(collected));
                             } else if (plugin.returnType instanceof ReturnValue) {
-                                const collected = plugin.returnType.collector(chain.leftmost, path.scope, null);
-                                const applied = plugin.replaceWith(collected, args, path.scope);
+                                const applied = plugin.replaceWith(chain.leftmost, args, path.scope);
                                 const wrap = variableDeclarator(parent.node.id, applied as Expression);
                                 parent.replaceWith(wrap);
-
                             } else {
                                 const id = identifier("chain");
                                 parent.getStatementParent().insertBefore(variableDeclaration("const", [

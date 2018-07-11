@@ -6,7 +6,6 @@ import {
     memberExpression,
     numericLiteral,
 } from "babel-types";
-import {Scope} from "babel-traverse";
 
 /**
  * a => a[0]
@@ -18,7 +17,7 @@ export function firstOfArray(node: Expression): Expression {
 /**
  * a => a.<method>(_element => wrapper(_element))
  */
-export function arrayCollector(array: Expression, scope: Scope,
+export function arrayCollector(array: Expression,
                                method: string, parameter: Identifier,
                                body: (parameter: Expression) => Expression): Expression {
     const forEachMember = memberExpression(array, identifier(method));

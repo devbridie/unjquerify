@@ -7,7 +7,7 @@ _start.addClass(\\"clazz\\");
 
 const _chain = _start.find(\\"a\\");
 
-const fontSize = _chain[0].css(\\"font-size\\");"
+const fontSize = _chain.css(\\"font-size\\");"
 `;
 
 exports[`unchain as assignment rval transforms mutated expression correctly 1`] = `
@@ -15,7 +15,7 @@ exports[`unchain as assignment rval transforms mutated expression correctly 1`] 
 
 _start.addClass(\\"clazz\\");
 
-const fontSize = _start[0].css(\\"font-size\\");"
+const fontSize = _start.css(\\"font-size\\");"
 `;
 
 exports[`unchain as assignment rval transforms mutationless expression correctly 1`] = `
@@ -25,7 +25,7 @@ _start.addClass(\\"clazz\\");
 
 _start.hide();
 
-const fontSize = _start[0].css(\\"font-size\\");"
+const fontSize = _start.css(\\"font-size\\");"
 `;
 
 exports[`unchain as assignment rval transforms mutationless expression correctly value 1`] = `

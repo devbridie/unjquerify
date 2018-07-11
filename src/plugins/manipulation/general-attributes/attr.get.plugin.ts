@@ -5,11 +5,11 @@ import {firstOfArray} from "../../../util/collectors";
 import {ReturnValue} from "../../../model/return-types/return-value";
 
 export const AttrGetPlugin: Plugin = {
-    returnType: new ReturnValue(array => firstOfArray(array)),
+    returnType: new ReturnValue(),
     matchesExpressionType: new CallExpressionOfjQueryCollection("attr"),
     applicableWithArguments: (args) => args.length === 1,
     replaceWith: (element, [property]) => {
-        const getAttribute = memberExpression(element, identifier("getAttribute"));
+        const getAttribute = memberExpression(firstOfArray(element), identifier("getAttribute"));
         return callExpression(getAttribute, [property]);
     },
 };

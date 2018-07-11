@@ -1,10 +1,10 @@
 import {callExpression, identifier, isStringLiteral, memberExpression, StringLiteral, stringLiteral} from "babel-types";
 import {Plugin} from "../../model/plugin";
 import {CallExpressionOfjQueryGlobal} from "../../model/matchers/call-expression-of-jquery-global";
-import {ReturnMutatedJQuery} from "../../model/return-types/return-mutated-jQuery";
+import {ReturnValue} from "../../model/return-types/return-value";
 
 export const GetElementsByClassNamePlugin: Plugin = {
-    returnType: new ReturnMutatedJQuery(),
+    returnType: new ReturnValue(),
     matchesExpressionType: new CallExpressionOfjQueryGlobal(),
     applicableWithArguments: (args) => {
         if (args.length !== 0) return false;
@@ -14,7 +14,8 @@ export const GetElementsByClassNamePlugin: Plugin = {
         if (!/^\.[a-zA-Z0-9]+$/.test(literal)) return false;
         return true;
     },
-    replaceWith: (element, [arg]: [StringLiteral]) => {
+    replaceWith: (element, args) => {
+        const arg = args[0] as StringLiteral;
         const cssClass = arg.value.slice(1);
         const newLiteral = stringLiteral(cssClass);
         const document = identifier("document");

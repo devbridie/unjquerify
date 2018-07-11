@@ -5,8 +5,8 @@ import {firstOfArray} from "../../../util/collectors";
 import {ReturnValue} from "../../../model/return-types/return-value";
 
 export const HtmlGetPlugin: Plugin = {
-    returnType: new ReturnValue(array => firstOfArray(array)),
+    returnType: new ReturnValue(),
     matchesExpressionType: new CallExpressionOfjQueryCollection("html"),
     applicableWithArguments: (args) => args.length === 0,
-    replaceWith: (element) => memberExpression(element, identifier("innerHTML")),
+    replaceWith: (element) => memberExpression(firstOfArray(element), identifier("innerHTML")),
 };
