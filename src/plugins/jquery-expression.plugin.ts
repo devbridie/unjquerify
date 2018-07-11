@@ -1,12 +1,4 @@
-import {
-    CallExpression,
-    Expression,
-    expressionStatement,
-    identifier,
-    variableDeclaration,
-    VariableDeclarator,
-    variableDeclarator,
-} from "babel-types";
+import {CallExpression, Expression, expressionStatement, VariableDeclarator, variableDeclarator,} from "babel-types";
 import {NodePath, Visitor} from "babel-traverse";
 import {CallExpressionOfjQueryCollection} from "../model/matchers/call-expression-of-jquery-collection";
 import {CallExpressionOfjQueryGlobal} from "../model/matchers/call-expression-of-jquery-global";
@@ -63,7 +55,11 @@ export const jQueryExpressionPlugin: (plugins: Plugin[]) => { visitor: Visitor }
                         // TODO remove messy casts.
                         if (path.parentPath.isVariableDeclarator()) {
                             const parent = path.parentPath as NodePath<VariableDeclarator>;
-                            if (plugin.returnType instanceof ReturnSelf) {
+                            if (plugin.escapeFromChain) {
+                                parent.replaceWith(variableDeclarator(parent.node.id, chain.leftmost));
+                                const replacement = plugin.replaceWith(chain.leftmost, args, path.scope);
+                                parent.getStatementParent().insertAfter(replacement);
+                            } else if (plugin.returnType instanceof ReturnSelf) {
                                 parent.replaceWith(variableDeclarator(parent.node.id, chain.leftmost));
                                 const id = path.scope.generateUidIdentifier("element");
                                 const collected = arrayCollector(parent.node.id as Expression,
@@ -74,14 +70,6 @@ export const jQueryExpressionPlugin: (plugins: Plugin[]) => { visitor: Visitor }
                             } else if (plugin.returnType instanceof ReturnValue) {
                                 const applied = plugin.replaceWith(chain.leftmost, args, path.scope);
                                 const wrap = variableDeclarator(parent.node.id, applied as Expression);
-                                parent.replaceWith(wrap);
-                            } else {
-                                const id = identifier("chain");
-                                parent.getStatementParent().insertBefore(variableDeclaration("const", [
-                                    variableDeclarator(id, chain.leftmost),
-                                ]));
-                                const transformed = plugin.replaceWith(id, args, path.scope);
-                                const wrap = variableDeclarator(parent.node.id, transformed as Expression);
                                 parent.replaceWith(wrap);
                             }
                         } else {

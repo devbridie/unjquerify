@@ -63,10 +63,6 @@ function generateStatements(path: NodePath<CallExpression>,
             const newChain = path.scope.generateUidIdentifier("chain");
             statements.push(generateAssignment(linkToCallExpression(lastChainVariable, link), newChain));
             lastChainVariable = newChain;
-        } else {
-            const newChain = path.scope.generateUidIdentifier("chain");
-            statements.push(generateAssignment(linkToCallExpression(lastChainVariable, link), newChain));
-            lastChainVariable = newChain;
         }
     }
     return statements;

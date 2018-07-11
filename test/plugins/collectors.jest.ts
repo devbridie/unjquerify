@@ -5,6 +5,7 @@ import {CssGetPlugin} from "../../src/plugins/manipulation/style-properties/css.
 import {QuerySelectorAllPlugin} from "../../src/plugins/selectors/querySelectorAll.plugin";
 import {IsPlugin} from "../../src/plugins/traversing/filtering/is.plugin";
 import {FindPlugin} from "../../src/plugins/traversing/tree-traversal/find.plugin";
+import {ReadyPlugin} from "../../src/plugins/events/document-loading/ready.plugin";
 
 describe("collectors", () => {
     it("chain > value", () => {
@@ -38,6 +39,13 @@ describe("collectors", () => {
     it("example: find", () => {
         const example = `const children = $("div").find(".article");`;
         const plugin = jQueryExpressionPlugin([FindPlugin, QuerySelectorAllPlugin]);
+        const transformed = babel.transform(example, {plugins: [plugin]}).code;
+        expect(transformed).toMatchSnapshot();
+    });
+
+    it("example: document.ready", () => {
+        const example = `const div = $("div").ready(() => console.log("test"))`;
+        const plugin = jQueryExpressionPlugin([ReadyPlugin, QuerySelectorAllPlugin]);
         const transformed = babel.transform(example, {plugins: [plugin]}).code;
         expect(transformed).toMatchSnapshot();
     });

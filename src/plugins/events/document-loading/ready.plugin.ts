@@ -24,4 +24,5 @@ export const ReadyPlugin: Plugin = {
             LISTENER_ID: scope.generateUidIdentifier("onLoadListener"),
         }) as Statement[];
     },
+    escapeFromChain: true,
 };

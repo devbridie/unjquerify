@@ -12,6 +12,18 @@ exports[`collectors chain 1`] = `
 divs.forEach(_element => _element.style.display = \\"none\\");"
 `;
 
+exports[`collectors example: document.ready 1`] = `
+"const div = document.querySelectorAll(\\"div\\");
+
+const _onLoadListener = () => console.log(\\"test\\");
+
+if (document.readyState !== 'loading') {
+  _onLoadListener();
+} else {
+  document.addEventListener('DOMContentLoaded', _onLoadListener);
+}"
+`;
+
 exports[`collectors example: find 1`] = `"const children = [].concat(...document.querySelectorAll(\\"div\\").map(_element => _element.querySelectorAll(\\".article\\")));"`;
 
 exports[`collectors example: is 1`] = `"const matching = document.querySelectorAll(\\"div\\").some(_element => _element.matches(\\".article\\"));"`;

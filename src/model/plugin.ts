@@ -8,4 +8,5 @@ export interface Plugin {
     applicableWithArguments: (args: Array<Expression | SpreadElement>) => boolean;
     returnType: ReturnType;
     replaceWith: (element: Expression, args: Expression[], scope: Scope) => Expression | Statement[];
+    escapeFromChain?: true;
 }
