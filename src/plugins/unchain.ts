@@ -17,7 +17,6 @@ import {
 } from "babel-types";
 import {Chain, Link} from "./chain";
 import {NodePath} from "babel-traverse";
-import {plugins} from "../all-plugins";
 import {CallExpressionOfjQueryCollection} from "../model/matchers/call-expression-of-jquery-collection";
 import {CallExpressionOfjQueryCollectionPlugin} from "./jquery-expression.plugin";
 import {Plugin} from "../model/plugin";
@@ -32,18 +31,19 @@ export function linkToCallExpression(object: Expression, link: Link): CallExpres
     return callExpression(memberExpression(object, identifier(link.methodName)), link.arguments);
 }
 
-const collectionPlugins =
-    plugins.filter(p => p.matchesExpressionType instanceof CallExpressionOfjQueryCollection) as
-        CallExpressionOfjQueryCollectionPlugin[];
-
-function lookupPlugin(link: Link): Plugin[] {
-    return collectionPlugins.filter(p =>
-        p.matchesExpressionType.methodName === link.methodName && p.applicableWithArguments(link.arguments),
-    );
-}
-
 function generateStatements(path: NodePath<CallExpression>,
-                            {leftmost, links}: Chain): Statement[] {
+                            {leftmost, links}: Chain, plugins: Plugin[]): Statement[] {
+
+    const collectionPlugins =
+        plugins.filter(p => p.matchesExpressionType instanceof CallExpressionOfjQueryCollection) as
+            CallExpressionOfjQueryCollectionPlugin[];
+
+    function lookupPlugin(link: Link): Plugin[] {
+        return collectionPlugins.filter(p =>
+            p.matchesExpressionType.methodName === link.methodName && p.applicableWithArguments(link.arguments),
+        );
+    }
+
     const statements = [];
 
     let lastChainVariable: Identifier;
@@ -68,12 +68,12 @@ function generateStatements(path: NodePath<CallExpression>,
     return statements;
 }
 
-export function unchainExpressions(path: NodePath<CallExpression>, chain: Chain) {
+export function unchainExpressions(path: NodePath<CallExpression>, chain: Chain, plugins: Plugin[]) {
     if (isExpressionStatement(path.parent)) {
-        const statements = generateStatements(path, chain);
+        const statements = generateStatements(path, chain, plugins);
         path.getStatementParent().replaceWithMultiple(statements);
     } else if (isVariableDeclarator(path.parent)) {
-        const statements = generateStatements(path, chain);
+        const statements = generateStatements(path, chain, plugins);
         const parentPath = path.parentPath;
         const assignments = statements.filter(s => isVariableDeclaration(s)) as VariableDeclaration[];
         const lastAssignment = assignments[assignments.length - 1];

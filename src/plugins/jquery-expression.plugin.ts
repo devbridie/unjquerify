@@ -43,11 +43,12 @@ export const jQueryExpressionPlugin: (plugins: Plugin[]) => { visitor: Visitor }
                 } else if (matchesCallExpressionOfjQueryCollection(node)) {
                     const chain = buildChain(node);
                     if (chain.links.length > 1) {
-                        unchainExpressions(path, chain);
+                        unchainExpressions(path, chain, plugins);
                     } else {
                         const link = chain.links[0];
                         const ps = collectionPlugins.filter(
-                            p => p.matchesExpressionType.methodName === link.methodName,
+                            p => p.matchesExpressionType.methodName === link.methodName &&
+                                p.applicableWithArguments(link.arguments),
                         );
                         if (ps.length === 0) return;
                         const plugin = ps[0];

@@ -2,6 +2,8 @@ import * as assert from "assert";
 import * as babel from "babel-core";
 import puppeteer, {Browser, Page} from "puppeteer";
 import {Plugin} from "../src/model/plugin";
+import {jQueryExpressionPlugin} from "../src/plugins/jquery-expression.plugin";
+import {QuerySelectorAllPlugin} from "../src/plugins/selectors/querySelectorAll.plugin";
 
 /**
  * Describes an equivalence browser test.
@@ -69,11 +71,11 @@ export function executeBrowserTestSuite(suite: BrowserTestSuite) {
     describe("equivalence", async () => {
         const browserContainer: TestContainer = {};
 
-        before(async () => {
+        beforeAll(async () => {
             browserContainer.browser = await puppeteer.launch();
         });
 
-        after(async () => {
+        afterAll(async () => {
             if (browserContainer.browser) {
                 await browserContainer.browser.close();
             }
@@ -94,8 +96,8 @@ export function executeBrowserTestSuite(suite: BrowserTestSuite) {
                     if (suite.before) {
                         await suite.before(preTransformPage, postTransformPage);
                     }
-                    const babelPlugins = suite.plugins.map(p => p.babel);
-                    const transformed = babel.transform(suite.code, {plugins: babelPlugins}).code as string;
+                    const plugin = jQueryExpressionPlugin([...suite.plugins, QuerySelectorAllPlugin]);
+                    const transformed = babel.transform(suite.code, {plugins: [plugin]}).code as string;
                     console.log("preTransformPage", suite.code);
                     await preTransformPage.evaluate(suite.code);
                     console.log("postTransformPage", transformed);

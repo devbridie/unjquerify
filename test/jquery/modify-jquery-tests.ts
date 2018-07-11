@@ -11,6 +11,8 @@ import {IsPlugin} from "../../src/plugins/traversing/filtering/is.plugin";
 import {removeAssertPlugin} from "./remove-assert-plugin";
 import {removeExpectTotalPlugin} from "./remove-expect-total-plugin";
 import {CssSetPlugin} from "../../src/plugins/manipulation/style-properties/css.set.plugin";
+import {jQueryExpressionPlugin} from "../../src/plugins/jquery-expression.plugin";
+import {QuerySelectorAllPlugin} from "../../src/plugins/selectors/querySelectorAll.plugin";
 
 interface TestConversion {
     fromFile: string;
@@ -22,29 +24,29 @@ const testConversions: TestConversion[] = [
     {
         fromFile: "css.js",
         plugins: [
-            renameQunitModulePlugin(CssGetPlugin.name),
+            renameQunitModulePlugin("CssGetPlugin"),
             filterTestsPlugin(["css(String|Hash)", "show/hide detached nodes"]),
-            CssGetPlugin.babel,
+            jQueryExpressionPlugin([CssGetPlugin, QuerySelectorAllPlugin]),
         ],
         toFile: "css.get.plugin.transform.js",
     },
     {
         fromFile: "css.js",
         plugins: [
-            renameQunitModulePlugin(CssSetPlugin.name),
+            renameQunitModulePlugin("CssSetPlugin"),
             filterTestsPlugin(["css(String|Hash)", "show/hide detached nodes"]),
-            CssSetPlugin.babel,
+            jQueryExpressionPlugin([CssSetPlugin, QuerySelectorAllPlugin]),
         ],
         toFile: "css.set.plugin.transform.js",
     },
     {
         fromFile: "traversing.js",
         plugins: [
-            renameQunitModulePlugin(IsPlugin.name),
+            renameQunitModulePlugin("IsPlugin"),
             filterTestsPlugin(["is(String|undefined)"], true),
             removeAssertPlugin([/.*invalid (expression|object).*/]),
             removeExpectTotalPlugin("is(String|undefined)", 23 - 5),
-            IsPlugin.babel,
+            jQueryExpressionPlugin([IsPlugin, QuerySelectorAllPlugin]),
         ],
         toFile: "traversing.transform.js",
     },

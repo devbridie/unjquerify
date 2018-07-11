@@ -1,4 +1,3 @@
-import "mocha";
 import {assertEqualResult, executeBrowserTestSuite, executeCode} from "../../../browser-test";
 import {CssGetPlugin} from "../../../../src/plugins/manipulation/style-properties/css.get.plugin";
 import {Page} from "puppeteer";
