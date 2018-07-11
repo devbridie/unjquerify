@@ -1,4 +1,4 @@
-import {callExpression, identifier, memberExpression,} from "babel-types";
+import {callExpression, identifier, memberExpression} from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {CallExpressionOfjQueryCollection} from "../../../model/matchers/call-expression-of-jquery-collection";
 import {ReturnSelf} from "../../../model/return-types/return-self";

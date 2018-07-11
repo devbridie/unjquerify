@@ -4,7 +4,7 @@ import {
     identifier,
     variableDeclaration,
     VariableDeclarator,
-    variableDeclarator
+    variableDeclarator,
 } from "babel-types";
 import {NodePath, Visitor} from "babel-traverse";
 import {CallExpressionOfjQueryCollection} from "../model/matchers/call-expression-of-jquery-collection";

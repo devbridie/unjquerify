@@ -4,7 +4,7 @@ import {
     isCallExpression,
     isIdentifier,
     isMemberExpression,
-    SpreadElement
+    SpreadElement,
 } from "babel-types";
 
 function chainToMemberList(expr: CallExpression, acc: Link[] = []): Link[] {

@@ -6,7 +6,8 @@ import {CssGetPlugin} from "../../src/plugins/manipulation/style-properties/css.
 describe("collectors", () => {
     it("chain > value", () => {
         const example = `const size = $("div").hide().css("font-size");`;
-        const transformed = babel.transform(example, {plugins: [jQueryExpressionPlugin([HidePlugin, CssGetPlugin])]}).code;
+        const plugin = jQueryExpressionPlugin([HidePlugin, CssGetPlugin]);
+        const transformed = babel.transform(example, {plugins: [plugin]}).code;
         expect(transformed).toMatchSnapshot();
     });
 

@@ -1,10 +1,10 @@
 import {
-    arrowFunctionExpression, BlockStatement,
+    arrowFunctionExpression,
     callExpression,
     Expression, Identifier,
     identifier,
     memberExpression,
-    numericLiteral
+    numericLiteral,
 } from "babel-types";
 import {Scope} from "babel-traverse";
 

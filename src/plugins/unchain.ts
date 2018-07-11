@@ -62,7 +62,8 @@ function generateStatements(path: NodePath<CallExpression>,
         } else if (returnType instanceof ReturnValue) {
             const lambdaArg = path.scope.generateUidIdentifier("lambda");
             const newChain = path.scope.generateUidIdentifier("chain");
-            statements.push(generateAssignment(linkToCallExpression(returnType.collector(lastChainVariable, path.scope, lambdaArg), link), newChain));
+            const collector = returnType.collector(lastChainVariable, path.scope, lambdaArg);
+            statements.push(generateAssignment(linkToCallExpression(collector, link), newChain));
         } else {
             const newChain = path.scope.generateUidIdentifier("chain");
             statements.push(generateAssignment(linkToCallExpression(lastChainVariable, link), newChain));

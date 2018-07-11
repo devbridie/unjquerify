@@ -4,7 +4,7 @@ import {
     isIdentifier,
     isMemberExpression,
     isStringLiteral,
-    numericLiteral
+    numericLiteral,
 } from "babel-types";
 import {Visitor} from "babel-traverse";
 

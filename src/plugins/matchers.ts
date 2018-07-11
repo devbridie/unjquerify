@@ -5,7 +5,7 @@ import {
     Identifier,
     isCallExpression,
     isMemberExpression,
-    MemberExpression
+    MemberExpression,
 } from "babel-types";
 
 export interface JQueryGlobalMemberExpression extends MemberExpression {

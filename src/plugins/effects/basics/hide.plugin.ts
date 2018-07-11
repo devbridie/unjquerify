@@ -1,4 +1,4 @@
-import {assignmentExpression, stringLiteral,} from "babel-types";
+import {assignmentExpression, stringLiteral} from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {CallExpressionOfjQueryCollection} from "../../../model/matchers/call-expression-of-jquery-collection";
 import {ReturnSelf} from "../../../model/return-types/return-self";

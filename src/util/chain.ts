@@ -5,7 +5,7 @@ import {
     isVariableDeclarator,
     variableDeclaration,
     VariableDeclarator,
-    variableDeclarator
+    variableDeclarator,
 } from "babel-types";
 import {NodePath} from "babel-traverse";
 
