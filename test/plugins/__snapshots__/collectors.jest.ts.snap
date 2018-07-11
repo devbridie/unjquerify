@@ -1,18 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`collectors chain > value 1`] = `
-"const _start = $(\\"div\\");
+"const _start = document.querySelectorAll(\\"div\\");
 
 _start.style.display = \\"none\\";
 const size = _start[0].css(\\"font-size\\");"
 `;
 
 exports[`collectors chain 1`] = `
-"const chain = $(\\"div\\");
-const divs = chain.style.display = \\"none\\";"
+"const divs = document.querySelectorAll(\\"div\\");
+divs.forEach(_element => _element.style.display = \\"none\\");"
 `;
 
-exports[`collectors value 1`] = `
-"const chain = $(\\"div\\");
-const fontSize = getComputedStyle(chain)[\\"font-size\\"];"
-`;
+exports[`collectors value 1`] = `"const fontSize = getComputedStyle(document.querySelectorAll(\\"div\\")[0])[\\"font-size\\"];"`;
