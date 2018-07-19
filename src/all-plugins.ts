@@ -16,6 +16,8 @@ import {RemovePlugin} from "./plugins/manipulation/dom-removal/remove.plugin";
 import {EmptyPlugin} from "./plugins/manipulation/dom-removal/empty.plugin";
 import {FindPlugin} from "./plugins/traversing/tree-traversal/find.plugin";
 import {CssSetPlugin} from "./plugins/manipulation/style-properties/css.set.plugin";
+import {ClickAttachPlugin} from "./plugins/events/mouse-events/click.attach.plugin";
+import {OnPlugin} from "./plugins/events/event-handler-attachment/on.plugin";
 
 export const plugins: Plugin[] = [
     ReadyPlugin,
@@ -35,4 +37,6 @@ export const plugins: Plugin[] = [
     RemovePlugin,
     EmptyPlugin,
     FindPlugin,
+    ClickAttachPlugin,
+    OnPlugin,
 ];

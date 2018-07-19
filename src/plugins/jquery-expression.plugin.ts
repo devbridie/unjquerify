@@ -42,6 +42,7 @@ export const jQueryExpressionPlugin: (plugins: Plugin[]) => { visitor: Visitor }
                         });
                 } else if (matchesCallExpressionOfjQueryCollection(node)) {
                     const chain = buildChain(node);
+                    console.log(chain);
                     if (chain.links.length > 1) {
                         unchainExpressions(path, chain, plugins);
                     } else {
@@ -74,9 +75,19 @@ export const jQueryExpressionPlugin: (plugins: Plugin[]) => { visitor: Visitor }
                                 parent.replaceWith(wrap);
                             }
                         } else {
-                            const out = plugin.replaceWith(chain.leftmost, args, path.scope);
-                            if (Array.isArray(out)) path.replaceWithMultiple(out);
-                            else path.replaceWith(out);
+                            if (plugin.escapeFromChain) {
+                                const out = plugin.replaceWith(chain.leftmost, args, path.scope);
+                                if (Array.isArray(out)) path.replaceWithMultiple(out);
+                                else path.replaceWith(out);
+                            } else if (plugin.returnType instanceof ReturnSelf) {
+                                const id = path.scope.generateUidIdentifier("element");
+
+                                const collected = arrayCollector(chain.leftmost as Expression,
+                                    "forEach", id, (ele) => {
+                                        return plugin.replaceWith(ele, args, path.scope) as Expression;
+                                    });
+                                path.replaceWith(collected);
+                            }
                         }
                     }
                 }

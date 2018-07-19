@@ -22,6 +22,13 @@ describe("collectors", () => {
         expect(transformed).toMatchSnapshot();
     });
 
+    it("statement", () => {
+        const example = `$("div").hide();`;
+        const plugin = jQueryExpressionPlugin([HidePlugin, QuerySelectorAllPlugin]);
+        const transformed = babel.transform(example, {plugins: [plugin]}).code;
+        expect(transformed).toMatchSnapshot();
+    });
+
     it("value", () => {
         const example = `const fontSize = $("div").css("font-size");`;
         const plugin = jQueryExpressionPlugin([CssGetPlugin, QuerySelectorAllPlugin]);

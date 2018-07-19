@@ -1,61 +1,64 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`unchain as assignment rval transforms child mutated expression correctly as value 1`] = `
-"const _start = $(\\"div\\");
+"const _start = document.querySelectorAll(\\"div\\");
 
-_start.addClass(\\"clazz\\");
+_start.forEach(_element => _element.classList.add(\\"clazz\\"));
 
-const _chain = _start.find(\\"a\\");
+const _chain = [].concat(..._start.map(_element2 => _element2.querySelectorAll(\\"a\\")));
 
-const fontSize = _chain.css(\\"font-size\\");"
+const fontSize = getComputedStyle(_chain[0])[\\"font-size\\"];"
 `;
 
 exports[`unchain as assignment rval transforms mutated expression correctly 1`] = `
-"const _start = $(\\"div\\");
+"const _start = document.querySelectorAll(\\"div\\");
 
-_start.addClass(\\"clazz\\");
+_start.forEach(_element => _element.classList.add(\\"clazz\\"));
 
-const fontSize = _start.css(\\"font-size\\");"
+const fontSize = getComputedStyle(_start[0])[\\"font-size\\"];"
 `;
 
 exports[`unchain as assignment rval transforms mutationless expression correctly 1`] = `
-"const _start = $(\\"a\\");
+"const _start = document.querySelectorAll(\\"a\\");
 
-_start.addClass(\\"clazz\\");
+_start.forEach(_element => _element.classList.add(\\"clazz\\"));
 
-_start.hide();
+_start.forEach(_element2 => _element2.style.display = \\"none\\");
 
-const fontSize = _start.css(\\"font-size\\");"
+const fontSize = getComputedStyle(_start[0])[\\"font-size\\"];"
 `;
 
 exports[`unchain as assignment rval transforms mutationless expression correctly value 1`] = `
-"const as = $(\\"a\\");
+"const as = document.querySelectorAll(\\"a\\");
 
-_start.addClass(\\"clazz\\");
+_start.forEach(_element => _element.classList.add(\\"clazz\\"));
 
-_start.hide();
+_start.forEach(_element2 => _element2.style.display = \\"none\\");
 
-_start.css(\\"font-size\\", 12);"
+_start.forEach(_element3 => _element3.setAttribute(\\"font-size\\", 12));"
 `;
 
 exports[`unchain as statement transforms mutated expression correctly 1`] = `
-"const _start = $(\\"div\\");
+"const _start = document.querySelectorAll(\\"div\\");
 
-_start.addClass(\\"clazz\\");
+_start.forEach(_element2 => _element2.classList.add(\\"clazz\\"));
 
-const _chain = _start.find(\\"a\\");
+const _chain = [].concat(..._start.map(_element3 => _element3.querySelectorAll(\\"a\\")));
 
-_chain.css(\\"font-size\\", 12);"
+_chain.forEach(_element4 => _element4.setAttribute(\\"font-size\\", 12));"
 `;
 
 exports[`unchain as statement transforms mutationless expression correctly 1`] = `
-"const _start = $(\\"a\\");
+"const _start = document.querySelectorAll(\\"a\\");
 
-_start.addClass(\\"clazz\\");
+_start.forEach(_element2 => _element2.classList.add(\\"clazz\\"));
 
-_start.hide();
+_start.forEach(_element3 => _element3.style.display = \\"none\\");
 
-_start.css(\\"font-size\\", 12);"
+_start.forEach(_element4 => _element4.setAttribute(\\"font-size\\", 12));"
 `;
 
-exports[`unchain short chain transforms self 1`] = `"const as = $(\\"a\\").addClass(\\"clazz\\");"`;
+exports[`unchain short chain transforms self 1`] = `
+"const as = document.querySelectorAll(\\"a\\");
+as.forEach(_element => _element.classList.add(\\"clazz\\"));"
+`;
