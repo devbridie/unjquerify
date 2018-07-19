@@ -18,7 +18,7 @@ export interface CallExpressionOfjQueryCollectionPlugin extends Plugin {
     matchesExpressionType: CallExpressionOfjQueryCollection;
 }
 
-export const jQueryExpressionPlugin: (plugins: Plugin[]) => { visitor: Visitor } = (plugins: Plugin[]) => {
+export function jQueryExpressionPlugin(plugins: Plugin[]): { visitor: Visitor } {
     const collectionPlugins =
         plugins.filter(p => p.matchesExpressionType instanceof CallExpressionOfjQueryCollection) as
             CallExpressionOfjQueryCollectionPlugin[];
@@ -42,7 +42,6 @@ export const jQueryExpressionPlugin: (plugins: Plugin[]) => { visitor: Visitor }
                         });
                 } else if (matchesCallExpressionOfjQueryCollection(node)) {
                     const chain = buildChain(node);
-                    console.log(chain);
                     if (chain.links.length > 1) {
                         unchainExpressions(path, chain, plugins);
                     } else {
@@ -94,4 +93,4 @@ export const jQueryExpressionPlugin: (plugins: Plugin[]) => { visitor: Visitor }
             },
         },
     };
-};
+}
