@@ -58,6 +58,14 @@ _start.forEach(_element3 => _element3.style.display = \\"none\\");
 _start.forEach(_element4 => _element4.setAttribute(\\"font-size\\", 12));"
 `;
 
+exports[`unchain multi statement chain transforms properly 1`] = `
+"const divs = document.querySelectorAll(\\"div\\");
+divs.forEach(_element => _element.classList.add(\\"visited\\"));
+const links = [].concat(...divs.map(_element2 => _element2.querySelectorAll(\\"a\\")));
+
+links.forEach(_element3 => _element3.textContent = \\"A!\\");"
+`;
+
 exports[`unchain short chain transforms self 1`] = `
 "const as = document.querySelectorAll(\\"a\\");
 as.forEach(_element => _element.classList.add(\\"clazz\\"));"

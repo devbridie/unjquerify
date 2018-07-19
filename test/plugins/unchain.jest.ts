@@ -7,6 +7,7 @@ import {FindPlugin} from "../../src/plugins/traversing/tree-traversal/find.plugi
 import {CssGetPlugin} from "../../src/plugins/manipulation/style-properties/css.get.plugin";
 import {HidePlugin} from "../../src/plugins/effects/basics/hide.plugin";
 import {CssSetPlugin} from "../../src/plugins/manipulation/style-properties/css.set.plugin";
+import {TextSetPlugin} from "../../src/plugins/manipulation/dom-insertion/text.set.plugin";
 
 describe("unchain", () => {
     describe("as statement", () => {
@@ -63,4 +64,14 @@ describe("unchain", () => {
             expect(transformed).toMatchSnapshot();
         });
     });
+
+    describe("multi statement chain", () => {
+        test("transforms properly", () => {
+            const example = `const divs = $("div").addClass("visited");
+const links = divs.find("a").text("A!");`;
+            const plugins = [AddClassPlugin, QuerySelectorAllPlugin, FindPlugin, TextSetPlugin];
+            const transformed = babel.transform(example, {plugins: [jQueryExpressionPlugin(plugins)]}).code;
+            expect(transformed).toMatchSnapshot();
+        })
+    })
 });
