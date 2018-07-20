@@ -21,6 +21,8 @@ import {OnPlugin} from "./plugins/events/event-handler-attachment/on.plugin";
 import {SiblingsPlugin} from "./plugins/traversing/tree-traversal/siblings.plugin";
 import {PrevPlugin} from "./plugins/traversing/tree-traversal/prev.plugin";
 import {NextPlugin} from "./plugins/traversing/tree-traversal/next.plugin";
+import {ValGetPlugin} from "./plugins/attributes/val.get.plugin";
+import {ValSetPlugin} from "./plugins/attributes/val.set.plugin";
 
 export const plugins: Plugin[] = [
     ReadyPlugin,
@@ -45,4 +47,6 @@ export const plugins: Plugin[] = [
     SiblingsPlugin,
     PrevPlugin,
     NextPlugin,
+    ValGetPlugin,
+    ValSetPlugin,
 ];
