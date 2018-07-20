@@ -23,6 +23,7 @@ import {PrevPlugin} from "./plugins/traversing/tree-traversal/prev.plugin";
 import {NextPlugin} from "./plugins/traversing/tree-traversal/next.plugin";
 import {ValGetPlugin} from "./plugins/attributes/val.get.plugin";
 import {ValSetPlugin} from "./plugins/attributes/val.set.plugin";
+import {IndexPlugin} from "./plugins/miscellaneous/dom-element-methods/index.plugin";
 
 export const plugins: Plugin[] = [
     ReadyPlugin,
@@ -49,4 +50,5 @@ export const plugins: Plugin[] = [
     NextPlugin,
     ValGetPlugin,
     ValSetPlugin,
+    IndexPlugin,
 ];
