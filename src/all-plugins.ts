@@ -28,6 +28,7 @@ import {ContentsPlugin} from "./plugins/traversing/miscellaneous-traversing/cont
 import {HeightGetPlugin} from "./plugins/dimensions/height.get.plugin";
 import {RemoveClassPlugin} from "./plugins/attributes/removeclass.plugin";
 import {HasClassPlugin} from "./plugins/attributes/hasclass.plugin";
+import {ToggleClassPlugin} from "./plugins/attributes/toggleclass.plugin";
 
 export const plugins: Plugin[] = [
     ReadyPlugin,
@@ -59,4 +60,5 @@ export const plugins: Plugin[] = [
     HeightGetPlugin,
     RemoveClassPlugin,
     HasClassPlugin,
+    ToggleClassPlugin,
 ];
