@@ -60,5 +60,6 @@ export function isCallOnjQuery(node: Expression, name?: string): node is CallOnj
     const property = callee.property;
     if (!isIdentifier(property)) return false;
     if (name && property.name !== name) return false;
+    if (isIdentifier(obj) && (obj.name === "Array" || obj.name === "document")) return false;
     return true;
 }

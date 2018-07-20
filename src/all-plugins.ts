@@ -19,6 +19,7 @@ import {CssSetPlugin} from "./plugins/manipulation/style-properties/css.set.plug
 import {ClickAttachPlugin} from "./plugins/events/mouse-events/click.attach.plugin";
 import {OnPlugin} from "./plugins/events/event-handler-attachment/on.plugin";
 import {SiblingsPlugin} from "./plugins/traversing/tree-traversal/siblings.plugin";
+import {PrevPlugin} from "./plugins/traversing/tree-traversal/prev.plugin";
 
 export const plugins: Plugin[] = [
     ReadyPlugin,
@@ -41,4 +42,5 @@ export const plugins: Plugin[] = [
     ClickAttachPlugin,
     OnPlugin,
     SiblingsPlugin,
+    PrevPlugin,
 ];

@@ -56,10 +56,9 @@ function generateStatements(path: NodePath<CallExpression>,
 
     for (const link of links) {
         const plugin = lookupPlugin(link)[0];
-        const returnType = plugin.returnType;
-        if (returnType instanceof ReturnSelf) {
+        if (!plugin || plugin.returnType instanceof ReturnSelf) {
             statements.push(expressionStatement(linkToCallExpression(lastChainVariable, link)));
-        } else if (returnType instanceof ReturnValue) {
+        } else if (plugin.returnType instanceof ReturnValue) {
             const newChain = path.scope.generateUidIdentifier("chain");
             statements.push(generateAssignment(linkToCallExpression(lastChainVariable, link), newChain));
             lastChainVariable = newChain;
