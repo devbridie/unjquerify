@@ -1,9 +1,9 @@
-import {Statement} from "babel-types";
 import {Plugin} from "../../../model/plugin";
 import {CallExpressionOfjQueryCollection} from "../../../model/matchers/call-expression-of-jquery-collection";
 import {ReturnSelf} from "../../../model/return-types/return-self";
 
-const template = require("@babel/template");
+import "../../../types/babel-template";
+import * as template from "@babel/template";
 
 const replaceAstTemplate = template.statements(`
     const LISTENER_ID = LISTENER_FUNCTION;
@@ -22,7 +22,7 @@ export const ReadyPlugin: Plugin = {
         return replaceAstTemplate({
             LISTENER_FUNCTION: arg,
             LISTENER_ID: scope.generateUidIdentifier("onLoadListener"),
-        }) as Statement[];
+        });
     },
     escapeFromChain: true,
 };

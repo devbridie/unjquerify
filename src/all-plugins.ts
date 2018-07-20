@@ -18,6 +18,7 @@ import {FindPlugin} from "./plugins/traversing/tree-traversal/find.plugin";
 import {CssSetPlugin} from "./plugins/manipulation/style-properties/css.set.plugin";
 import {ClickAttachPlugin} from "./plugins/events/mouse-events/click.attach.plugin";
 import {OnPlugin} from "./plugins/events/event-handler-attachment/on.plugin";
+import {SiblingsPlugin} from "./plugins/traversing/tree-traversal/siblings.plugin";
 
 export const plugins: Plugin[] = [
     ReadyPlugin,
@@ -39,4 +40,5 @@ export const plugins: Plugin[] = [
     FindPlugin,
     ClickAttachPlugin,
     OnPlugin,
+    SiblingsPlugin,
 ];
