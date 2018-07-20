@@ -20,6 +20,7 @@ import {ClickAttachPlugin} from "./plugins/events/mouse-events/click.attach.plug
 import {OnPlugin} from "./plugins/events/event-handler-attachment/on.plugin";
 import {SiblingsPlugin} from "./plugins/traversing/tree-traversal/siblings.plugin";
 import {PrevPlugin} from "./plugins/traversing/tree-traversal/prev.plugin";
+import {NextPlugin} from "./plugins/traversing/tree-traversal/next.plugin";
 
 export const plugins: Plugin[] = [
     ReadyPlugin,
@@ -43,4 +44,5 @@ export const plugins: Plugin[] = [
     OnPlugin,
     SiblingsPlugin,
     PrevPlugin,
+    NextPlugin,
 ];
