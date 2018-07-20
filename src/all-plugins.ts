@@ -25,6 +25,7 @@ import {ValGetPlugin} from "./plugins/attributes/val.get.plugin";
 import {ValSetPlugin} from "./plugins/attributes/val.set.plugin";
 import {IndexPlugin} from "./plugins/miscellaneous/dom-element-methods/index.plugin";
 import {ContentsPlugin} from "./plugins/traversing/miscellaneous-traversing/contents.plugin";
+import {HeightGetPlugin} from "./plugins/dimensions/height.get.plugin";
 
 export const plugins: Plugin[] = [
     ReadyPlugin,
@@ -53,4 +54,5 @@ export const plugins: Plugin[] = [
     ValSetPlugin,
     IndexPlugin,
     ContentsPlugin,
+    HeightGetPlugin,
 ];
