@@ -3,8 +3,7 @@ import {CallExpressionOfjQueryCollection} from "../../../model/matchers/call-exp
 import {ReturnValue} from "../../../model/return-types/return-value";
 import {flatMapNodeList} from "../../../util/babel";
 
-import "../../../types/babel-template";
-import * as babeltemplate from "@babel/template";
+const babeltemplate = require("@babel/template");
 import {arrowFunctionExpression} from "babel-types";
 
 const template = babeltemplate.expression("[...ELEMENT.parentNode.children].filter(PARAM => PARAM !== ELEMENT)");

@@ -2,8 +2,7 @@ import {Plugin} from "../../../model/plugin";
 import {CallExpressionOfjQueryCollection} from "../../../model/matchers/call-expression-of-jquery-collection";
 import {ReturnSelf} from "../../../model/return-types/return-self";
 
-import "../../../types/babel-template";
-import * as template from "@babel/template";
+const template = require("@babel/template");
 
 const replaceAstTemplate = template.statements(`
     const LISTENER_ID = LISTENER_FUNCTION;
