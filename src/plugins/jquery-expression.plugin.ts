@@ -86,6 +86,10 @@ export function jQueryExpressionPlugin(plugins: Plugin[]): { visitor: Visitor } 
                                         return plugin.replaceWith(ele, args, path.scope) as Expression;
                                     });
                                 path.replaceWith(collected);
+                            } else if (plugin.returnType instanceof ReturnValue) {
+                                const applied = plugin.replaceWith(chain.leftmost, args, path.scope);
+                                if (Array.isArray(applied)) path.replaceWithMultiple(applied);
+                                else path.replaceWith(applied);
                             }
                         }
                     }
