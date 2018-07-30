@@ -1,6 +1,8 @@
 import {
+    callExpression,
     CallExpression,
     Expression,
+    identifier,
     isCallExpression,
     isIdentifier,
     isMemberExpression,
@@ -29,6 +31,10 @@ export function unWrapjQueryElement(node: Node): false | Expression {
     const isJqueryCallee = isjQueryIdentifier(callee);
     if (!isJqueryCallee) return false;
     return node.arguments[0] as Expression;
+}
+
+export function wrapInjQueryFunctionCall(expression: Expression): Expression {
+    return callExpression(identifier("$"), [expression]);
 }
 
 /**

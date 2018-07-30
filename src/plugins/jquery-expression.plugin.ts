@@ -77,6 +77,10 @@ export function jQueryExpressionPlugin(plugins: Plugin[]): { visitor: Visitor } 
     const callExpressionOfjQueryGlobalPlugins =
         plugins.filter(p => p.matchesExpressionType instanceof CallExpressionOfjQueryGlobal);
 
+    const isToArrayException = (chain: Chain) => {
+        return chain.links.length === 2 && chain.links[1].methodName === "toArray";
+    };
+
     const CallExpressionTransform = (path: NodePath<CallExpression>) => {
         const node = path.node;
         const args = node.arguments as Expression[]; // TODO accept Spread
@@ -91,7 +95,7 @@ export function jQueryExpressionPlugin(plugins: Plugin[]): { visitor: Visitor } 
                 });
         } else if (matchesCallExpressionOfjQueryCollection(node)) {
             const chain = buildChain(node);
-            if (chain.links.length > 1) {
+            if (chain.links.length > 1 && !isToArrayException(chain)) {
                 unchainExpressions(path, chain, plugins);
             } else {
                 const [link] = chain.links;

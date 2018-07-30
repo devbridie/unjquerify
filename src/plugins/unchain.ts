@@ -22,8 +22,9 @@ import {CallExpressionOfjQueryCollectionPlugin} from "./jquery-expression.plugin
 import {Plugin} from "../model/plugin";
 import {ReturnSelf} from "../model/return-types/return-self";
 import {ReturnValue} from "../model/return-types/return-value";
+import {wrapInjQueryFunctionCall} from "../util/jquery-heuristics";
 
-function generateAssignment(expr: Expression, id: Identifier): Statement {
+function generateAssignment(id: Identifier, expr: Expression): Statement {
     return variableDeclaration("const", [variableDeclarator(id, expr)]);
 }
 
@@ -49,18 +50,25 @@ function generateStatements(path: NodePath<CallExpression>,
     let lastChainVariable: Identifier;
     if (!isIdentifier(leftmost)) {
         lastChainVariable = path.scope.generateUidIdentifier("start");
-        statements.push(generateAssignment(leftmost, lastChainVariable));
+        statements.push(generateAssignment(lastChainVariable, leftmost));
     } else {
         lastChainVariable = leftmost;
     }
 
     for (const link of links) {
         const plugin = lookupPlugin(link)[0];
-        if (!plugin || plugin.returnType instanceof ReturnSelf) {
+        if (!plugin) { // we don't know this method
+            const newChain = path.scope.generateUidIdentifier("chain");
+            const wrapped = wrapInjQueryFunctionCall(lastChainVariable);
+            const newCallExpression = linkToCallExpression(wrapped, link);
+            const toArray = callExpression(memberExpression(newCallExpression, identifier("toArray")), []);
+            statements.push(generateAssignment(newChain, toArray));
+            lastChainVariable = newChain;
+        } else if (plugin.returnType instanceof ReturnSelf) {
             statements.push(expressionStatement(linkToCallExpression(lastChainVariable, link)));
         } else if (plugin.returnType instanceof ReturnValue) {
             const newChain = path.scope.generateUidIdentifier("chain");
-            statements.push(generateAssignment(linkToCallExpression(lastChainVariable, link), newChain));
+            statements.push(generateAssignment(newChain, linkToCallExpression(lastChainVariable, link)));
             lastChainVariable = newChain;
         }
     }
