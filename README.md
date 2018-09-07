@@ -29,11 +29,9 @@ document.getElementById("submit").addEventListener("click", function () {
 * Verify that the console shows the transformed script.
 
 ### As dependency
-* **As the plugin is not yet published**, clone this repository.
 * Ensure that `npm` is available.
-* Run `npm build` in unjQuerify.
-* Run `npm install path/to/unjquerify` in your dependant package.
-* unjQuerify's plugins are exported in `unjquerify/build/src/all-plugins`.
+* Run `npm install unjquerify`.
+* Import unjQuerify's plugins using `require('unjquerify/build/src/all-plugins')`` or a similar method.
 
 ## Contributing
 Contributions are always welcome. Please see this [project's issue tracker](https://github.com/devbridie/unjquerify/issues).

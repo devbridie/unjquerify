@@ -1,3 +1,8 @@
 /test
-/src
 /build/test
+/src
+/.idea
+/sample
+/tsconfig.json
+/tslint.json
+/jest.config.js
